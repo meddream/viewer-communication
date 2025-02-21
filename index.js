@@ -281,6 +281,14 @@
                 this.postActionMessage('CACHE_STUDIES', {studies});
             };
 
+            functions.showStudies = function (studies) {
+                this.postActionMessage('SHOW_STUDIES', {studies});
+            };
+
+            functions.hideStudies = function (studies) {
+                this.postActionMessage('HIDE_STUDIES', {studies});
+            };
+
             functions.closeStudies = function (studies) {
                 this.postActionMessage('CLOSE_STUDIES', {studies});
             };
@@ -301,6 +309,14 @@
 
             functions.cacheStudies = function (token) {
                 this.postActionMessage('CACHE_STUDIES_WITH_TOKEN', {token});
+            };
+
+            functions.showStudies = function (token) {
+                this.postActionMessage('SHOW_STUDIES_WITH_TOKEN', {token});
+            };
+
+            functions.hideStudies = function (token) {
+                this.postActionMessage('HIDE_STUDIES_WITH_TOKEN', {token});
             };
 
             functions.closeStudies = function (token) {
@@ -678,6 +694,8 @@
             functions.replaceStudies = undefined;
             functions.preloadStudies = undefined;
             functions.cacheStudies = undefined;
+            functions.showStudies = undefined;
+            functions.hideStudies = undefined;
             functions.closeStudies = undefined;
             this.addIntegrationFunctions();
         };

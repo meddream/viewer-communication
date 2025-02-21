@@ -1,5 +1,5 @@
 # MedDream Viewer Communication API
-##### Version 1.0.37 (2025-01-16)
+##### Version 1.0.38 (2025-02-21)
 
 ## Add component to your project
 Import and create new Viewer Communication component in your project:
@@ -160,6 +160,54 @@ const studies = [
 ];
 ```
 
+#### Show studies
+```js
+viewerCommunication.showStudies(studies);
+```
+
+Parameter:
+
+- `studies` - Array of study objects. Each study object has **_studyUid_** and **_storageId_** parameters.
+
+Array example:
+
+```js
+const studies = [
+    {
+        studyUid: 'study-uid-1',
+        storageId: 'storage-id'
+    },
+    {
+        studyUid: 'study-uid-2',
+        storageId: 'storage-id'
+    }
+];
+```
+
+#### Hide studies
+```js
+viewerCommunication.hideStudies(studies);
+```
+
+Parameter:
+
+- `studies` - Array of study objects. Each study object has **_studyUid_** and **_storageId_** parameters.
+
+Array example:
+
+```js
+const studies = [
+    {
+        studyUid: 'study-uid-1',
+        storageId: 'storage-id'
+    },
+    {
+        studyUid: 'study-uid-2',
+        storageId: 'storage-id'
+    }
+];
+```
+
 #### Close studies
 ```js
 viewerCommunication.closeStudies(studies);
@@ -211,6 +259,24 @@ Parameter:
 #### Cache studies
 ```js
 viewerCommunication.cacheStudies(token);
+```
+
+Parameter:
+
+- `token` - Generated token with studies information.
+
+#### Show studies
+```js
+viewerCommunication.showStudies(token);
+```
+
+Parameter:
+
+- `token` - Generated token with studies information.
+
+#### Hide studies
+```js
+viewerCommunication.hideStudies(token);
 ```
 
 Parameter:
@@ -1147,6 +1213,11 @@ can't see a menu item in Measurements menu - then this user would be able to inv
 communication API).
 
 ## Change log
+### 1.0.38 (2025-02-21)
+#### Changes
+- Added `showStudies` function to show hidden thumbnail studies.
+- Added `hideStudies` function to hide visible thumbnail studies.
+
 ### 1.0.37 (2025-01-16)
 #### Changes
 - Updated project license.
