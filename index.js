@@ -72,6 +72,9 @@
                 case 'STUDY_LOADED':
                     this.performOnStudyLoadedCallback(actionData);
                     break;
+                case 'STUDY_IS_CACHED':
+                    this.performOnStudyIsCachedCallback(actionData);
+                    break;
                 case 'ANNOTATIONS_SAVE_STARTED':
                     this.performOnAnnotationsSaveStartedCallback(actionData);
                     break;
@@ -167,6 +170,12 @@
         functions.performOnStudyLoadedCallback = function (actionData) {
             if (callbacks.onStudyLoadedCallback) {
                 callbacks.onStudyLoadedCallback(actionData);
+            }
+        }
+
+        functions.performOnStudyIsCachedCallback = function (actionData) {
+            if (callbacks.onStudyIsCachedCallback) {
+                callbacks.onStudyIsCachedCallback(actionData);
             }
         }
 
@@ -544,6 +553,16 @@
         functions.unsubscribeStudyLoadedEvent = function () {
             callbacks.onStudyLoadedCallback = undefined;
             this.unsubscribeEvent('STUDY_LOADED');
+        };
+
+        functions.subscribeStudyIsCachedEvent = function (callback) {
+            callbacks.onStudyIsCachedCallback = callback;
+            this.subscribeEvent('STUDY_IS_CACHED');
+        };
+
+        functions.unsubscribeStudyIsCachedEvent = function () {
+            callbacks.onStudyIsCachedCallback = undefined;
+            this.unsubscribeEvent('STUDY_IS_CACHED');
         };
 
         functions.subscribeAnnotationsSaveStartedEvent = function (callback) {

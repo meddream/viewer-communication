@@ -542,6 +542,9 @@
 				case 'studyLoaded':
 					viewerCommunication.subscribeStudyLoadedEvent(this.eventCallbackWrapper(eventName));
 					break;
+				case 'studyIsCached':
+					viewerCommunication.subscribeStudyIsCachedEvent(this.eventCallbackWrapper(eventName));
+					break;
 				case 'annotationsSaveStarted':
 					viewerCommunication.subscribeAnnotationsSaveStartedEvent(this.eventCallbackWrapper(eventName));
 					break;
@@ -596,6 +599,9 @@
 			switch (eventName) {
 				case 'studyLoaded':
 					viewerCommunication.unsubscribeStudyLoadedEvent(registeredListener);
+					break;
+				case 'studyIsCached':
+					viewerCommunication.unsubscribeStudyIsCachedEvent(registeredListener);
 					break;
 				case 'annotationsSaveStarted':
 					viewerCommunication.unsubscribeAnnotationsSaveStartedEvent(registeredListener);
@@ -851,6 +857,7 @@
 			<label for='eventSelection'>Event:</label>
 			<select id='eventSelection'>
 				<option value='studyLoaded'>Study loaded</option>
+				<option value='studyIsCached'>Study is cached</option>
 				<option value='annotationsSaveStarted'>Annotations save started</option>
 				<option value='annotationsSaved'>Annotations saved</option>
 				<option value='structureSetEdited'>Structure set edited</option>
