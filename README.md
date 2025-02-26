@@ -1,5 +1,5 @@
 # MedDream Viewer Communication API
-##### Version 1.0.38 (2025-02-21)
+##### Version 1.0.39 (2025-02-26)
 
 ## Add component to your project
 Import and create new Viewer Communication component in your project:
@@ -123,13 +123,14 @@ Parameter:
 viewerCommunication.replaceStudies(studies);
 ```
 
-Parameter:
+Parameters:
 
 - `studies` - Array of study uid's.
+- `preloadThumbnails` - Parameter to enable thumbnail preloading. Available options: **_true_**/**_false_**.
 
 #### Preload studies
 ```js
-viewerCommunication.preloadStudies(studies);
+viewerCommunication.preloadStudies(studies, preloadThumbnails);
 ```
 
 Parameter:
@@ -243,13 +244,14 @@ Parameter:
 viewerCommunication.replaceStudies(token);
 ```
 
-Parameter:
+Parameters:
 
 - `token` - Generated token with studies information.
+- `preloadThumbnails` - Parameter to enable thumbnail preloading. Available options: **_true_**/**_false_**.
 
 #### Preload studies
 ```js
-viewerCommunication.preloadStudies(token);
+viewerCommunication.preloadStudies(token, preloadThumbnails);
 ```
 
 Parameter:
@@ -887,6 +889,21 @@ Parameter:
 viewerCommunication.unsubscribeStudyLoadedEvent();
 ```
 
+#### Subscribe study is cached event
+```js
+const callback = (study) => console.log(study);
+viewerCommunication.subscribeStudyIsCachedEvent(callback);
+```
+
+Parameter:
+
+- `callback` - Callback function which is called when event is triggered.
+
+#### Unsubscribe study is cached event
+```js
+viewerCommunication.unsubscribeStudyIsCachedEvent();
+```
+
 #### Subscribe annotations save started event
 ```js
 const callback = (data) => console.log(data);
@@ -1213,6 +1230,13 @@ can't see a menu item in Measurements menu - then this user would be able to inv
 communication API).
 
 ## Change log
+### 1.0.39 (2025-02-26)
+#### Changes
+- Added `subscribeStudyIsCachedEvent` function to subscribe of study is cached event callback.
+- Added `unsubscribeStudyIsCachedEvent` function to unsubscribe of study is cached event callback.
+- Updated `preloadStudies` function for study and token integrations to allow preloading thumbnails with `preloadThumbnails` parameter.
+- Updated `getOpenedStudies` function callback with information if study is visible or hidden.
+
 ### 1.0.38 (2025-02-21)
 #### Changes
 - Added `showStudies` function to show hidden thumbnail studies.

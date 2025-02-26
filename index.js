@@ -282,8 +282,8 @@
                 this.postActionMessage('REPLACE_STUDIES', {studies});
             };
 
-            functions.preloadStudies = function (studies) {
-                this.postActionMessage('PRELOAD_STUDIES', {studies});
+            functions.preloadStudies = function (studies, preloadThumbnails) {
+                this.postActionMessage('PRELOAD_STUDIES', {studies, preloadThumbnails});
             };
 
             functions.cacheStudies = function (studies) {
@@ -312,8 +312,8 @@
                 this.postActionMessage('REPLACE_STUDIES_WITH_TOKEN', {token});
             };
 
-            functions.preloadStudies = function (token) {
-                this.postActionMessage('PRELOAD_STUDIES_WITH_TOKEN', {token});
+            functions.preloadStudies = function (token, preloadThumbnails) {
+                this.postActionMessage('PRELOAD_STUDIES_WITH_TOKEN', {token, preloadThumbnails});
             };
 
             functions.cacheStudies = function (token) {
