@@ -1,5 +1,5 @@
 # MedDream Viewer Communication API
-##### Version 1.0.39 (2025-02-26)
+##### Version 1.0.39 (2025-02-28)
 
 ## Add component to your project
 Import and create new Viewer Communication component in your project:
@@ -1230,7 +1230,7 @@ can't see a menu item in Measurements menu - then this user would be able to inv
 communication API).
 
 ## Change log
-### 1.0.39 (2025-02-26)
+### 1.0.39 (2025-02-28)
 #### Changes
 - Added `subscribeStudyIsCachedEvent` function to subscribe of study is cached event callback.
 - Added `unsubscribeStudyIsCachedEvent` function to unsubscribe of study is cached event callback.
