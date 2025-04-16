@@ -1,5 +1,5 @@
 # MedDream Viewer Communication API
-##### Version 1.0.39 (2025-02-28)
+##### Version 1.0.40 (2025-04-16)
 
 ## Add component to your project
 Import and create new Viewer Communication component in your project:
@@ -1229,7 +1229,20 @@ Note the tools available to manipulate via this call are exactly the same as in 
 can't see a menu item in Measurements menu - then this user would be able to invoke respective measurement via
 communication API).
 
+#### Pass a list of suggested annotation names for segmentation module
+```js
+const actionArgs = {suggestedNames: ['Left', 'Right']};
+viewerCommunication.setSuggestedAnnotationNames(actionArgs);
+```
+
+Parameter:
+- `actionArgs`. An object with a `suggestedNames` property. This property should be an array of strings to be shown to the end user, when he/she clicks the annotation name field to change default name to something else.
+
 ## Change log
+### 1.0.40 (2025-04-16)
+#### Changes
+- Added `setSuggestedAnnotationNames` function to pass a list of suggested names for segmenting annotations.
+
 ### 1.0.39 (2025-02-28)
 #### Changes
 - Added `subscribeStudyIsCachedEvent` function to subscribe of study is cached event callback.

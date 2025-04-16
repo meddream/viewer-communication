@@ -479,6 +479,12 @@
 			viewerCommunication.clickMeasurementTool(methodArguments);
 		}
 
+		function setSuggestedAnnotationNames () {
+			const eventBodyInput = document.getElementById('eventBodyInput').value;
+			const methodArguments = JSON.parse(eventBodyInput);
+			viewerCommunication.setSuggestedAnnotationNames(methodArguments);
+		}
+
 		function initiateCreateMeasurement () {
 			const eventBodyInput = document.getElementById('eventBodyInput').value;
 			const methodArguments = JSON.parse(eventBodyInput);
@@ -900,6 +906,7 @@
 			<button type='button' onClick='createVirtualSeriesFromInput()'>Create virtual series</button>
 			<button type='button' onClick='toggleVirtualSeriesDialogFromInput()'>Toggle virtual series create dialog</button>
 			<button type='button' onClick='clickMeasurementTool()'>Click measurement tool</button>
+			<button type='button' onClick='setSuggestedAnnotationNames()'>Set suggested segm. ann. names</button>
 		</div>
 	</div>
 	<iframe id='medDreamIframe' title='medDreamIframe' width='100%' height='550px' style='display: none;'></iframe>

@@ -473,6 +473,10 @@
             this.postActionMessage('SIMULATE_MEASUREMENT_ACTION', actionArgs);
         }
 
+        functions.setSuggestedAnnotationNames = function (actionArgs) {
+            this.postActionMessage('SET_SUGGESTED_ANNOTATION_NAMES', actionArgs);
+        }
+
         functions.subscribeEvent = function (eventType) {
             this.postActionMessage('SUBSCRIBE_EVENT', {eventType});
         };
