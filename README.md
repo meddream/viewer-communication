@@ -1243,7 +1243,6 @@ Parameter:
 #### Changes
 - Added `setSuggestedAnnotationNames` function to pass a list of suggested names for segmenting annotations.
 
-
 ### 1.0.39 (2025-02-28)
 #### Changes
 - Added `subscribeStudyIsCachedEvent` function to subscribe of study is cached event callback.
