@@ -317,12 +317,20 @@ Parameters:
 
 #### Open instance
 ```js
-viewerCommunication.openInstance(instanceUid, viewportColumn, viewportRow, viewportActions);
+viewerCommunication.openInstance({
+    instanceUid, 
+    panelId, 
+    viewportColumn, 
+    viewportRow, 
+    viewportActions
+});
 ```
 
-Parameters:
+Object parameters:
 
 - `instanceUid` - Unique instance db uid which has to be opened to viewport.
+- `panelId` - If provided, identifies the target panel, where this instance is intended to be opened up. If not provided,
+  shall default to the first panel.
 - `viewportColumn` - Column number of desired viewport.
 - `viewportRow` - Row number of desired viewport.
 - `viewportActions` - Object of actions which have to be performed on viewport after instance is loaded.
@@ -355,23 +363,6 @@ const viewportActions = {
     alignment: 'CENTER'                     //RIGHT, LEFT, CENTER
 };
 ```
-
-#### Open instance Ext
-```js
-viewerCommunication.openInstanceExt(instanceUid, panelId, viewportColumn, viewportRow, viewportActions);
-```
-
-Parameters:
-
-- `instanceUid` - Unique instance uid which has to be opened to viewport. Contrary to `openInstance` method, this is an UID,
-that uniquely identifies an instance among all open studies.
-- `panelId` - If provided, identifies the target panel, where this instance is intended to be opened up. If not provided,
-shall default to the first panel.
-- `viewportColumn` - Column number of desired viewport.
-- `viewportRow` - Row number of desired viewport.
-- `viewportActions` - Object of actions which have to be performed on viewport after instance is loaded.
-
-For detailed explanation of available viewportActions, please check description of `openIntance` method.
 
 #### Export instance
 ```js
@@ -423,6 +414,20 @@ const permissions = {
     smartPaintInfo: false
 };
 viewerCommunication.updateSegmentationToolPermissions(permissions);
+```
+
+#### Set suggested annotation names
+```js
+viewerCommunication.setSuggestedAnnotationNames(suggestedNames);
+```
+
+Parameter:
+- `suggestedNames` - Array with suggested segmentation annotation names.
+
+Array example:
+
+```js
+const suggestedNames = ['Left', 'Right'];
 ```
 
 #### Get opened studies
@@ -1127,18 +1132,18 @@ function get3DImagePositionFrom2D (position2d) {
 ```js
 const callback = ({status, details}) => console.log(status, details);
 viewerCommunication.subscribeCreateVirtualSeriesCompletedEvent(callback);
-viewerCommunication.createVirtualSeries(operationArgs);
+viewerCommunication.createVirtualSeries(actionData);
 ```
 
 The function requests creating virtual series from provided arguments.
 Parameters:
 
-- `operationArgs` - Arguments to pass over to virtual series builder.
+- `actionData` - Arguments to pass over to virtual series builder.
 
-operationArgs data object example:
+actionData data object example:
 
 ```js
-const operationArgs = {
+const actionData = {
     studyUid: '1.3.12.2.1107__STORAGE_ID1',
     fromSeries: [
         '1.3.12.2.1107__5064.0.0.0__STORAGE_ID1',
@@ -1171,17 +1176,17 @@ Usage:
 
 #### Toggle Create Virtual Series modal dialog
 ```js
-viewerCommunication.toggleVirtualSeriesDialog(actionArgs);
+viewerCommunication.toggleVirtualSeriesDialog(actionData);
 ```
 
 Submits a request to show (or hide) a Create Virtual Series dialog.
 Parameters:
-- `actionArgs`. An arguments to be passed over to the dialog.
+- `actionData`. An arguments to be passed over to the dialog.
 
-actionArgs data object example:
+actionData data object example:
 
 ```js
-const actionArgs = {
+const actionData = {
     action: 'show',
     studyUid: '1.3.12.2.1107__STORAGE_ID1',
     fromSeries: [
@@ -1201,7 +1206,7 @@ Create Virtual Series dialog (and all of them will be displayed as pre-selected)
 ```js
 const eventName = 'image-position-changed';
 const callback = (eventParams) => console.log(eventParams);
-viewerCommunication.subscribeEventByName(eventName, actionArgs);
+viewerCommunication.subscribeEventByName(eventName, callback);
 ```
 
 Parameter:
@@ -1219,24 +1224,15 @@ Parameter:
 
 #### Click measurement tool menu item
 ```js
-const actionArgs = {toolId: 'measure-line'};
-viewerCommunication.clickMeasurementTool(actionArgs);
+const actionData = {toolId: 'measure-line'};
+viewerCommunication.clickMeasurementTool(actionData);
 ```
 
 Parameter:
-- `actionArgs`. An object with `toolId` field, identifying the measurement tool to be activated/deactivated.
+- `actionData`. An object with `toolId` field, identifying the measurement tool to be activated/deactivated.
 Note the tools available to manipulate via this call are exactly the same as in Measurements menu (i.e., if you
 can't see a menu item in Measurements menu - then this user would be able to invoke respective measurement via
 communication API).
-
-#### Pass a list of suggested annotation names for segmentation module
-```js
-const actionArgs = {suggestedNames: ['Left', 'Right']};
-viewerCommunication.setSuggestedAnnotationNames(actionArgs);
-```
-
-Parameter:
-- `actionArgs`. An object with a `suggestedNames` property. This property should be an array of strings to be shown to the end user, when he/she clicks the annotation name field to change default name to something else.
 
 ## Change log
 ### 1.0.40 (2025-04-16)
