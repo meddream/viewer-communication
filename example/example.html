@@ -201,6 +201,7 @@
 
 		function openInstance () {
 			const instanceUid = '1.2.840.113619.2.55.3.4271045733.996.1449464144.599.1';
+			const panelId = 'viewport-container-1-1';
 			const viewportColumn = 2;
 			const viewportRow = 1;
 			const viewportActions = {
@@ -213,7 +214,13 @@
 				//customScale: 0.5,							//Use if custom scale
 				//alignment: 'CENTER'						//RIGHT, LEFT, CENTER
 			};
-			viewerCommunication.openInstance(instanceUid, viewportColumn, viewportRow, viewportActions);
+			viewerCommunication.openInstance({
+				instanceUid,
+				panelId,
+				viewportColumn,
+				viewportRow,
+				viewportActions
+			});
 		}
 
 		function exportActiveInstance () {
@@ -254,6 +261,11 @@
 				smartPaintInfo: true
 			};
 			viewerCommunication.updateSegmentationToolPermissions(permissions);
+		}
+
+		function setSuggestedAnnotationNames () {
+			const suggestedNames = ['Left', 'Right'];
+			viewerCommunication.setSuggestedAnnotationNames(suggestedNames);
 		}
 
 		function getSnapshot () {
@@ -365,39 +377,6 @@
 			viewerCommunication.changeViewportOrientation(containerId, orientation);
 		}
 
-		function createMeasurement () {
-			const measurementData = {
-				id: 'closed-polygon-1',
-				type: 'closed-polygon',
-				containerId: 'viewport-container-1-1-1-1',
-				studyUid: '1.2.840.113619.2.55.3.4271045733.996.1449464144.595__Orthanc',
-				seriesUid: '1.2.840.113619.2.55.3.4271045733.996.1449464144.595__1.2.840.113619.2.55.3.4271045733.996.1449464144.601__Orthanc',
-				instanceUid: '1.2.840.113619.2.55.3.4271045733.996.1449464144.595__1.2.840.113619.2.55.3.4271045733.996.1449464144.601__1.2.840.113619.2.55.3.4271045733.996.1449464144.602.1__Orthanc',
-				colors: {
-					regularColor: '#FFA500',
-					activeColor: '#33CCFF',
-					markedColor: '#009BFF',
-					activeLabelColor: '#FFF'
-				},
-				data: {
-					points: [
-						[-55.168894532260964, 32.4931972896166, 42.5],
-						[12.520785835194232, -6.558543217479382, 42.5],
-						[95.8311612584763, 37.179406120000635, 42.5],
-						[-0.4964600446614611, 118.40702869925087, 42.5],
-						[-55.168894532260964, 32.4931972896166, 42.5]
-					],
-					disabled: false
-				}
-			}
-			viewerCommunication.createNewMeasurement('viewport-container-1-1-1-1', measurementData);
-		}
-
-		function deleteMeasurement () {
-			const measurementId = 'closed-polygon-1';
-			viewerCommunication.deleteMeasurementById(measurementId);
-		}
-
 		function getListOfAvailableHpForStudy () {
 			viewerCommunication.getListOfAvailableHpForStudy();
 		}
@@ -438,69 +417,219 @@
 			viewerCommunication.applyNextHangingProtocolCP();
 		}
 
-		function createMeasurementFromInput () {
-			const eventBodyInput = document.getElementById('eventBodyInput').value;
-			const measurementData = JSON.parse(eventBodyInput);
-			viewerCommunication.createNewMeasurement('viewport-container-1-1-1-1', measurementData);
-		}
-
-		function updateMeasurementFromInput () {
-			const eventBodyInput = document.getElementById('eventBodyInput').value;
-			const measurementData = JSON.parse(eventBodyInput);
-			viewerCommunication.updateMeasurement('viewport-container-1-1-1-1', measurementData);
-		}
-
-		function deleteMeasurementFromInput () {
-			const measurementId = document.getElementById('eventBodyInput').value;
-			viewerCommunication.deleteMeasurementById(measurementId.trim());
-		}
-
-		function openInstanceExtFromInput () {
-			const eventBodyInput = document.getElementById('eventBodyInput').value;
-			const eventArgs = JSON.parse(eventBodyInput);
-			viewerCommunication.openInstanceExt(eventArgs);
-		}
-
-		function createVirtualSeriesFromInput () {
-			const eventBodyInput = document.getElementById('eventBodyInput').value;
-			const eventArgs = JSON.parse(eventBodyInput);
-			viewerCommunication.createVirtualSeries(eventArgs);
-		}
-
-		function toggleVirtualSeriesDialogFromInput () {
-			const eventBodyInput = document.getElementById('eventBodyInput').value;
-			const eventArgs = JSON.parse(eventBodyInput);
-			viewerCommunication.toggleVirtualSeriesDialog(eventArgs);
-		}
-
-		function clickMeasurementTool () {
-			const eventBodyInput = document.getElementById('eventBodyInput').value;
-			const methodArguments = JSON.parse(eventBodyInput);
-			viewerCommunication.clickMeasurementTool(methodArguments);
-		}
-
-		function setSuggestedAnnotationNames () {
-			const eventBodyInput = document.getElementById('eventBodyInput').value;
-			const methodArguments = JSON.parse(eventBodyInput);
-			viewerCommunication.setSuggestedAnnotationNames(methodArguments);
+		function performInitiateCreateMeasurement () {
+			const inputData = getInputData(document.getElementById('eventBodyInput'));
+			if (!inputData) {
+				const exampleData = {
+					measurementType: 'myocardium-roi-annotation'
+				};
+				setInputData(document.getElementById('eventBodyInput'), exampleData);
+			}
+			initiateCreateMeasurement();
 		}
 
 		function initiateCreateMeasurement () {
-			const eventBodyInput = document.getElementById('eventBodyInput').value;
-			const methodArguments = JSON.parse(eventBodyInput);
-			viewerCommunication.initiateCreateMeasurement('viewport-container-1-1-1-1', ...methodArguments);
+			const inputData = getInputData(document.getElementById('eventBodyInput'));
+			viewerCommunication.initiateCreateMeasurement('viewport-container-1-1-1-1', inputData.measurementType);
+		}
+
+		function performSelectMeasurementToEdit () {
+			const inputData = getInputData(document.getElementById('eventBodyInput'));
+			if (!inputData) {
+				const exampleData = {
+					measurementId: 'my-annotation-1',
+					parameters: {hoveredRegionIndex: 1, toolId: 'repulsor'}
+				};
+				setInputData(document.getElementById('eventBodyInput'), exampleData);
+			}
+			selectMeasurementToEdit();
 		}
 
 		function selectMeasurementToEdit () {
-			const eventBodyInput = document.getElementById('eventBodyInput').value;
-			const methodArguments = JSON.parse(eventBodyInput);
-			viewerCommunication.selectMeasurementToEdit('viewport-container-1-1-1-1', ...methodArguments);
+			const inputData = getInputData(document.getElementById('eventBodyInput'));
+			viewerCommunication.selectMeasurementToEdit('viewport-container-1-1-1-1', inputData.measurementId, inputData.parameters);
+		}
+
+		function performChangeMeasurementDisplayById () {
+			const inputData = getInputData(document.getElementById('eventBodyInput'));
+			if (!inputData) {
+				const exampleData = {
+					measurementId: 'my-annotation-1',
+					parameters: {show: true, sendToFront: true}
+				};
+				setInputData(document.getElementById('eventBodyInput'), exampleData);
+			}
+			changeMeasurementDisplayById();
 		}
 
 		function changeMeasurementDisplayById () {
-			const eventBodyInput = document.getElementById('eventBodyInput').value;
-			const methodArguments = JSON.parse(eventBodyInput);
-			viewerCommunication.changeMeasurementDisplayById('viewport-container-1-1-1-1', ...methodArguments);
+			const inputData = getInputData(document.getElementById('eventBodyInput'));
+			viewerCommunication.changeMeasurementDisplayById('viewport-container-1-1-1-1', inputData.measurementId, inputData.parameters);
+		}
+
+		function performCreateNewMeasurement () {
+			const inputData = getInputData(document.getElementById('eventBodyInput'));
+			if (!inputData) {
+				const exampleData = {
+					id: 'closed-polygon-1',
+					type: 'closed-polygon',
+					containerId: 'viewport-container-1-1-1-1',
+					studyUid: '1.2.840.113619.2.55.3.4271045733.996.1449464144.595__Orthanc',
+					seriesUid: '1.2.840.113619.2.55.3.4271045733.996.1449464144.595__1.2.840.113619.2.55.3.4271045733.996.1449464144.601__Orthanc',
+					instanceUid: '1.2.840.113619.2.55.3.4271045733.996.1449464144.595__1.2.840.113619.2.55.3.4271045733.996.1449464144.601__1.2.840.113619.2.55.3.4271045733.996.1449464144.602.1__Orthanc',
+					colors: {
+						regularColor: '#FFA500',
+						activeColor: '#33CCFF',
+						markedColor: '#009BFF',
+						activeLabelColor: '#FFF'
+					},
+					data: {
+						points: [
+							[-55.168894532260964, 32.4931972896166, 42.5],
+							[12.520785835194232, -6.558543217479382, 42.5],
+							[95.8311612584763, 37.179406120000635, 42.5],
+							[-0.4964600446614611, 118.40702869925087, 42.5],
+							[-55.168894532260964, 32.4931972896166, 42.5]
+						],
+						disabled: false
+					}
+				};
+				setInputData(document.getElementById('eventBodyInput'), exampleData);
+			}
+			createNewMeasurement();
+		}
+
+		function createNewMeasurement () {
+			const inputData = getInputData(document.getElementById('eventBodyInput'));
+			viewerCommunication.createNewMeasurement('viewport-container-1-1-1-1', inputData);
+		}
+
+		function performUpdateMeasurement () {
+			const inputData = getInputData(document.getElementById('eventBodyInput'));
+			if (!inputData) {
+				const exampleData = {
+					id: 'closed-polygon-1',
+					type: 'closed-polygon',
+					containerId: 'viewport-container-1-1-1-1',
+					studyUid: '1.2.840.113619.2.55.3.4271045733.996.1449464144.595__Orthanc',
+					seriesUid: '1.2.840.113619.2.55.3.4271045733.996.1449464144.595__1.2.840.113619.2.55.3.4271045733.996.1449464144.601__Orthanc',
+					instanceUid: '1.2.840.113619.2.55.3.4271045733.996.1449464144.595__1.2.840.113619.2.55.3.4271045733.996.1449464144.601__1.2.840.113619.2.55.3.4271045733.996.1449464144.602.1__Orthanc',
+					colors: {
+						regularColor: '#FFA500',
+						activeColor: '#33CCFF',
+						markedColor: '#009BFF',
+						activeLabelColor: '#FFF'
+					},
+					data: {
+						points: [
+							[-55.168894532260964, 32.4931972896166, 42.5],
+							[12.520785835194232, -16.558543217479382, 42.5],
+							[95.8311612584763, 50.179406120000635, 42.5],
+							[-0.4964600446614611, 125.40702869925087, 42.5],
+							[-55.168894532260964, 32.4931972896166, 42.5]
+						],
+						disabled: false
+					}
+				};
+				setInputData(document.getElementById('eventBodyInput'), exampleData);
+			}
+			updateMeasurement();
+		}
+
+		function updateMeasurement () {
+			const inputData = getInputData(document.getElementById('eventBodyInput'));
+			viewerCommunication.updateMeasurement('viewport-container-1-1-1-1', inputData);
+		}
+
+		function performDeleteMeasurementById () {
+			const inputData = getInputData(document.getElementById('eventBodyInput'));
+			if (!inputData) {
+				const exampleData = {
+					id: 'closed-polygon-1'
+				};
+				setInputData(document.getElementById('eventBodyInput'), exampleData);
+			}
+			deleteMeasurementById();
+		}
+
+		function deleteMeasurementById () {
+			const inputData = getInputData(document.getElementById('eventBodyInput'));
+			viewerCommunication.deleteMeasurementById(inputData.id);
+		}
+
+		function performClickMeasurementTool () {
+			const inputData = getInputData(document.getElementById('eventBodyInput'));
+			if (!inputData) {
+				const exampleData = {
+					toolId: 'measure-line'
+				};
+				setInputData(document.getElementById('eventBodyInput'), exampleData);
+			}
+			clickMeasurementTool();
+		}
+
+		function clickMeasurementTool () {
+			const inputData = getInputData(document.getElementById('eventBodyInput'));
+			viewerCommunication.clickMeasurementTool(inputData.toolId);
+		}
+
+		function performCreateVirtualSeries () {
+			const inputData = getInputData(document.getElementById('eventBodyInput'));
+			if (!inputData) {
+				const exampleData = {
+					studyUid: '1.2.840.113619.2.55.3.4271045733.996.1449464144.595__Orthanc',
+					fromSeries: [
+						'1.2.840.113619.2.55.3.4271045733.996.1449464144.595__1.2.840.113619.2.55.3.4271045733.996.1449464144.601__Orthanc',
+						'1.2.840.113619.2.55.3.4271045733.996.1449464144.595__1.2.840.113619.2.55.3.4271045733.996.1449464144.601.3__Orthanc'
+					],
+					postActions: {
+						openIn: 'viewport-container-1-1-1-2'
+					}
+				};
+				setInputData(document.getElementById('eventBodyInput'), exampleData);
+			}
+			createVirtualSeries();
+		}
+
+		function createVirtualSeries () {
+			const inputData = getInputData(document.getElementById('eventBodyInput'));
+			viewerCommunication.createVirtualSeries(inputData);
+		}
+
+		function performToggleVirtualSeriesDialog () {
+			const inputData = getInputData(document.getElementById('eventBodyInput'));
+			if (!inputData) {
+				const exampleData = {
+					action: 'show',
+					studyUid: '1.2.840.113619.2.55.3.4271045733.996.1449464144.595__Orthanc',
+					fromSeries: [
+						'1.2.840.113619.2.55.3.4271045733.996.1449464144.595__1.2.840.113619.2.55.3.4271045733.996.1449464144.601__Orthanc',
+						'1.2.840.113619.2.55.3.4271045733.996.1449464144.595__1.2.840.113619.2.55.3.4271045733.996.1449464144.601.3__Orthanc'
+					],
+					postActions: {
+						openIn: 'viewport-container-1-1-1-2'
+					}
+				};
+				setInputData(document.getElementById('eventBodyInput'), exampleData);
+			}
+			toggleVirtualSeriesDialog();
+		}
+
+		function toggleVirtualSeriesDialog () {
+			const inputData = getInputData(document.getElementById('eventBodyInput'));
+			viewerCommunication.toggleVirtualSeriesDialog(inputData);
+		}
+
+		function getInputData (input) {
+			try {
+				return JSON.parse(input.value);
+			} catch (e) {
+				return undefined;
+			}
+		}
+
+		function setInputData (input, data) {
+			input.value = JSON.stringify(data);
 		}
 
 		function getData () {
@@ -526,8 +655,8 @@
 			}
 		}
 
-		function onGetDataCallback (studies) {
-			console.log(studies);
+		function onGetDataCallback (data) {
+			console.log(data);
 		}
 
 		function onCommunicationServiceReady () {
@@ -815,11 +944,15 @@
 			<button type='button' onclick='openInstance()'>Open instance</button>
 			<button type='button' onclick='exportActiveInstance()'>Export active instance</button>
 			<button type='button' onclick='exportContainerInstance(2, 2)'>Export container 2:2 instance</button>
-			<button type='button' onclick='disableSegmentation()'>Disable segmentation</button>
-			<button type='button' onclick='enableSegmentation()'>Enable segmentation</button>
 			<button type='button' onclick='getSnapshot()'>Get snapshot</button>
 			<button type='button' onclick='setSnapshot()'>Set snapshot</button>
 			<button type='button' onclick='getWindowReference()'>Get window reference</button>
+		</div>
+		<br>
+		<div>
+			<button type='button' onclick='disableSegmentation()'>Disable segmentation</button>
+			<button type='button' onclick='enableSegmentation()'>Enable segmentation</button>
+			<button type='button' onClick='setSuggestedAnnotationNames()'>Set suggested annotation names</button>
 		</div>
 		<br>
 		<div>
@@ -845,11 +978,6 @@
 		</div>
 	</div>
 	<div id="measurementsFunctionsContainer" class="tab-content" style='display: none;'>
-		<div>
-			<button type='button' onclick='createMeasurement()'>Create measurement</button>
-			<button type='button' onclick='deleteMeasurement()'>Delete measurement</button>
-		</div>
-		<br>
 		<div>
 			<label for='dataTypeSelection'>Data type:</label>
 			<select id='dataTypeSelection'>
@@ -892,21 +1020,31 @@
 		</div>
 		<br>
 		<div>
-			<label for='eventBodyInput'>Inject method arguments</label>
+			<label for='eventBodyInput'>Action data</label>
 			<div style="display:flex; flex-direction: row;">
 				<textarea id='eventBodyInput' rows=5 style="flex-basis:100%;"></textarea>
 			</div>
-			<button type='button' onClick='initiateCreateMeasurement()'>Initiate new measurement</button>
-			<button type='button' onClick='selectMeasurementToEdit()'>Select measurement to edit</button>
-			<button type='button' onClick='changeMeasurementDisplayById()'>Change measurement display by ID</button>
-			<button type='button' onclick='createMeasurementFromInput()'>Create measurement from data</button>
-			<button type='button' onclick='updateMeasurementFromInput()'>Update measurement by ID</button>
-			<button type='button' onclick='deleteMeasurementFromInput()'>Delete measurement by ID</button>
-			<button type='button' onClick='openInstanceExtFromInput()'>Open instance</button>
-			<button type='button' onClick='createVirtualSeriesFromInput()'>Create virtual series</button>
-			<button type='button' onClick='toggleVirtualSeriesDialogFromInput()'>Toggle virtual series create dialog</button>
-			<button type='button' onClick='clickMeasurementTool()'>Click measurement tool</button>
-			<button type='button' onClick='setSuggestedAnnotationNames()'>Set suggested segm. ann. names</button>
+		</div>
+		<br>
+		<div>
+			<label>Series measurement actions:</label>
+			<button type='button' onClick='performInitiateCreateMeasurement()'>Initiate create measurement</button>
+			<button type='button' onClick='performSelectMeasurementToEdit()'>Select measurement to edit</button>
+			<button type='button' onClick='performChangeMeasurementDisplayById()'>Change measurement display by ID</button>
+		</div>
+		<br>
+		<div>
+			<label>All measurement actions:</label>
+			<button type='button' onclick='performCreateNewMeasurement()'>Create measurement from data</button>
+			<button type='button' onclick='performUpdateMeasurement()'>Update measurement by ID</button>
+			<button type='button' onclick='performDeleteMeasurementById()'>Delete measurement by ID</button>
+			<button type='button' onClick='performClickMeasurementTool()'>Click measurement tool</button>
+		</div>
+		<br>
+		<div>
+			<label>Virtual series actions:</label>
+			<button type='button' onClick='performCreateVirtualSeries()'>Create virtual series</button>
+			<button type='button' onClick='performToggleVirtualSeriesDialog()'>Toggle virtual series create dialog</button>
 		</div>
 	</div>
 	<iframe id='medDreamIframe' title='medDreamIframe' width='100%' height='550px' style='display: none;'></iframe>
