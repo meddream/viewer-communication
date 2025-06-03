@@ -377,11 +377,6 @@
 			viewerCommunication.changeViewportOrientation(containerId, orientation);
 		}
 
-		function deleteMeasurement () {
-			const measurementId = 'closed-polygon-1';
-			viewerCommunication.deleteMeasurementById(measurementId);
-		}
-
 		function getListOfAvailableHpForStudy () {
 			viewerCommunication.getListOfAvailableHpForStudy();
 		}
@@ -983,10 +978,6 @@
 		</div>
 	</div>
 	<div id="measurementsFunctionsContainer" class="tab-content" style='display: none;'>
-		<div>
-			<button type='button' onclick='deleteMeasurement()'>Delete measurement</button>
-		</div>
-		<br>
 		<div>
 			<label for='dataTypeSelection'>Data type:</label>
 			<select id='dataTypeSelection'>
