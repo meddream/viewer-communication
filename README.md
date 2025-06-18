@@ -1,5 +1,5 @@
 # MedDream Viewer Communication API
-##### Version 1.0.41 (2025-06-03)
+##### Version 1.0.42 (2025-06-18)
 
 ## Add component to your project
 Import and create new Viewer Communication component in your project:
@@ -702,6 +702,56 @@ Parameter:
 
 - `measurementId` - Measurement id that has to be deleted.
 
+#### Click measurement tool
+```js
+viewerCommunication.clickMeasurementTool(toolId);
+```
+
+Parameter:
+
+- `toolId` - Measurement tool id.
+
+Possible measurement tool id's:
+
+```text
+Measurement tool Line: 'measure-line'
+Measurement tool Angle: 'measure-angle'
+Measurement tool Cobb Angle: 'measure-cobb-angle'
+Measurement tool Polyline: 'measure-polyline'
+Measurement tool Area: 'measure-area'
+Measurement tool Ellipse: 'measure-oval'
+Measurement tool Rectangle: 'measure-rectangle-area'
+Measurement tool Volume: 'measure-volume'
+Measurement tool Height Difference: 'measure-height'
+Measurement tool VTI: 'measure-vti'
+Measurement tool CTR: 'measure-cardiothoracic-ratio'
+Measurement tool TPA: 'measure-tibial-plateau-angle'
+Measurement tool Norberg Angle: 'measure-norberg-angle'
+Measurement tool VHS: 'measure-vertebral-heart-size'
+Measurement tool Flatfoot: 'measure-flat-foot'
+Measurement tool Goniometry: 'measure-goniometry'
+Measurement tool TT-TG Distance: 'measure-tt-tg-distance'
+Measurement tool HTO Angles: 'measure-hto-angles'
+Measurement tool Vertebra Angle: 'measure-vertebra-angle'
+Measurement tool Spine Labeling: 'measure-spine'
+Measurement tool Hip DI: 'measure-hip-distraction-index'
+Measurement tool TTA: 'measure-tibial-tuberosity-advancement'
+Measurement tool ROI: 'measure-roi'
+Measurement tool Closed polygon: 'measure-closed-polygon'
+Measurement tool Flexpoly: 'measure-flexpoly'
+Measurement tool Pencil: 'measure-pencil'
+Measurement tool Arrow: 'measure-arrow-pointer'
+Measurement tool Text: 'measure-text'
+Measurement tool Measurement (mV, s): 'measure-ecg-mvs'
+Measurement tool QT points (RR, QT, QTc): 'measure-ecg-qt'
+Measurement tool Hr: 'measure-ecg-hr'
+Measurement tool QRS Axis: 'measure-ecg-qrs'
+Measurement tool Myocardium ROI: 'measure-myocardium-roi'
+Measurement tool Mask: 'measure-rectangle-mask'
+Measurement tool Repulsor: 'measure-repulsor'
+Measurement tool Intensity: 'measure-intensity'
+```
+
 #### Select measurement to edit
 ```js
 viewerCommunication.selectMeasurementToEdit(containerId, measurementId, parameters);
@@ -1235,6 +1285,10 @@ function get3DImagePositionFrom2D (position2d) {
 ```
 
 ## Change log
+### 1.0.42 (2025-06-18)
+#### Changes
+- Added missing `Click measurement tool` documentation section with information about `clickMeasurementTool` function.
+
 ### 1.0.41 (2025-06-03)
 #### Changes
 - Updated library example file.
