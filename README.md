@@ -1285,7 +1285,7 @@ function get3DImagePositionFrom2D (position2d) {
 ```
 
 ## Change log
-### 1.0.40 (2025-04-16)
+### 1.0.42 (2025-06-18)
 #### Changes
 - Added missing `Click measurement tool` documentation section with information about `clickMeasurementTool` function.
 
