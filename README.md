@@ -1,5 +1,5 @@
 # MedDream Viewer Communication API
-##### Version 1.0.37 (2025-01-16)
+##### Version 1.0.42 (2025-06-18)
 
 ## Add component to your project
 Import and create new Viewer Communication component in your project:
@@ -123,13 +123,14 @@ Parameter:
 viewerCommunication.replaceStudies(studies);
 ```
 
-Parameter:
+Parameters:
 
 - `studies` - Array of study uid's.
+- `preloadThumbnails` - Parameter to enable thumbnail preloading. Available options: **_true_**/**_false_**.
 
 #### Preload studies
 ```js
-viewerCommunication.preloadStudies(studies);
+viewerCommunication.preloadStudies(studies, preloadThumbnails);
 ```
 
 Parameter:
@@ -139,6 +140,54 @@ Parameter:
 #### Cache studies
 ```js
 viewerCommunication.cacheStudies(studies);
+```
+
+Parameter:
+
+- `studies` - Array of study objects. Each study object has **_studyUid_** and **_storageId_** parameters.
+
+Array example:
+
+```js
+const studies = [
+    {
+        studyUid: 'study-uid-1',
+        storageId: 'storage-id'
+    },
+    {
+        studyUid: 'study-uid-2',
+        storageId: 'storage-id'
+    }
+];
+```
+
+#### Show studies
+```js
+viewerCommunication.showStudies(studies);
+```
+
+Parameter:
+
+- `studies` - Array of study objects. Each study object has **_studyUid_** and **_storageId_** parameters.
+
+Array example:
+
+```js
+const studies = [
+    {
+        studyUid: 'study-uid-1',
+        storageId: 'storage-id'
+    },
+    {
+        studyUid: 'study-uid-2',
+        storageId: 'storage-id'
+    }
+];
+```
+
+#### Hide studies
+```js
+viewerCommunication.hideStudies(studies);
 ```
 
 Parameter:
@@ -195,13 +244,14 @@ Parameter:
 viewerCommunication.replaceStudies(token);
 ```
 
-Parameter:
+Parameters:
 
 - `token` - Generated token with studies information.
+- `preloadThumbnails` - Parameter to enable thumbnail preloading. Available options: **_true_**/**_false_**.
 
 #### Preload studies
 ```js
-viewerCommunication.preloadStudies(token);
+viewerCommunication.preloadStudies(token, preloadThumbnails);
 ```
 
 Parameter:
@@ -211,6 +261,24 @@ Parameter:
 #### Cache studies
 ```js
 viewerCommunication.cacheStudies(token);
+```
+
+Parameter:
+
+- `token` - Generated token with studies information.
+
+#### Show studies
+```js
+viewerCommunication.showStudies(token);
+```
+
+Parameter:
+
+- `token` - Generated token with studies information.
+
+#### Hide studies
+```js
+viewerCommunication.hideStudies(token);
 ```
 
 Parameter:
@@ -249,12 +317,20 @@ Parameters:
 
 #### Open instance
 ```js
-viewerCommunication.openInstance(instanceUid, viewportColumn, viewportRow, viewportActions);
+viewerCommunication.openInstance({
+    instanceUid, 
+    panelId, 
+    viewportColumn, 
+    viewportRow, 
+    viewportActions
+});
 ```
 
-Parameters:
+Object parameters:
 
-- `instanceUid` - Unique instance db uid which has to be opened to viewport.
+- `instanceUid` - Unique instance uid (virtual or db uid) which has to be opened to viewport.
+- `panelId` - If provided, identifies the target panel, where this instance is intended to be opened up. If not provided,
+  shall default to the first panel.
 - `viewportColumn` - Column number of desired viewport.
 - `viewportRow` - Row number of desired viewport.
 - `viewportActions` - Object of actions which have to be performed on viewport after instance is loaded.
@@ -287,23 +363,6 @@ const viewportActions = {
     alignment: 'CENTER'                     //RIGHT, LEFT, CENTER
 };
 ```
-
-#### Open instance Ext
-```js
-viewerCommunication.openInstanceExt(instanceUid, panelId, viewportColumn, viewportRow, viewportActions);
-```
-
-Parameters:
-
-- `instanceUid` - Unique instance uid which has to be opened to viewport. Contrary to `openInstance` method, this is an UID,
-that uniquely identifies an instance among all open studies.
-- `panelId` - If provided, identifies the target panel, where this instance is intended to be opened up. If not provided,
-shall default to the first panel.
-- `viewportColumn` - Column number of desired viewport.
-- `viewportRow` - Row number of desired viewport.
-- `viewportActions` - Object of actions which have to be performed on viewport after instance is loaded.
-
-For detailed explanation of available viewportActions, please check description of `openIntance` method.
 
 #### Export instance
 ```js
@@ -355,6 +414,20 @@ const permissions = {
     smartPaintInfo: false
 };
 viewerCommunication.updateSegmentationToolPermissions(permissions);
+```
+
+#### Set suggested annotation names
+```js
+viewerCommunication.setSuggestedAnnotationNames(suggestedNames);
+```
+
+Parameter:
+- `suggestedNames` - Array with suggested segmentation annotation names.
+
+Array example:
+
+```js
+const suggestedNames = ['Left', 'Right'];
 ```
 
 #### Get opened studies
@@ -610,16 +683,7 @@ const measurementData = {
 };
 ```
 
-#### Delete measurement by id
-```js
-viewerCommunication.deleteMeasurementById(measurementId);
-```
-
-Parameter:
-
-- `measurementId` - Measurement id that has to be deleted.
-
-#### Update measurement by id
+#### Update measurement
 ```js
 viewerCommunication.updateMeasurement(containerId, measurementData);
 ```
@@ -629,51 +693,116 @@ Parameters:
 - `containerId` - Viewport container id in which measurement will be created.
 - `measurementData` - Object with measurement data to use updating existing measurement.
 
+#### Delete measurement by id
+```js
+viewerCommunication.deleteMeasurementById(measurementId);
+```
+
+Parameter:
+
+- `measurementId` - Measurement id that has to be deleted.
+
+#### Click measurement tool
+```js
+viewerCommunication.clickMeasurementTool(toolId);
+```
+
+Parameter:
+
+- `toolId` - Measurement tool id.
+
+Possible measurement tool id's:
+
+```text
+Measurement tool Line: 'measure-line'
+Measurement tool Angle: 'measure-angle'
+Measurement tool Cobb Angle: 'measure-cobb-angle'
+Measurement tool Polyline: 'measure-polyline'
+Measurement tool Area: 'measure-area'
+Measurement tool Ellipse: 'measure-oval'
+Measurement tool Rectangle: 'measure-rectangle-area'
+Measurement tool Volume: 'measure-volume'
+Measurement tool Height Difference: 'measure-height'
+Measurement tool VTI: 'measure-vti'
+Measurement tool CTR: 'measure-cardiothoracic-ratio'
+Measurement tool TPA: 'measure-tibial-plateau-angle'
+Measurement tool Norberg Angle: 'measure-norberg-angle'
+Measurement tool VHS: 'measure-vertebral-heart-size'
+Measurement tool Flatfoot: 'measure-flat-foot'
+Measurement tool Goniometry: 'measure-goniometry'
+Measurement tool TT-TG Distance: 'measure-tt-tg-distance'
+Measurement tool HTO Angles: 'measure-hto-angles'
+Measurement tool Vertebra Angle: 'measure-vertebra-angle'
+Measurement tool Spine Labeling: 'measure-spine'
+Measurement tool Hip DI: 'measure-hip-distraction-index'
+Measurement tool TTA: 'measure-tibial-tuberosity-advancement'
+Measurement tool ROI: 'measure-roi'
+Measurement tool Closed polygon: 'measure-closed-polygon'
+Measurement tool Flexpoly: 'measure-flexpoly'
+Measurement tool Pencil: 'measure-pencil'
+Measurement tool Arrow: 'measure-arrow-pointer'
+Measurement tool Text: 'measure-text'
+Measurement tool Measurement (mV, s): 'measure-ecg-mvs'
+Measurement tool QT points (RR, QT, QTc): 'measure-ecg-qt'
+Measurement tool Hr: 'measure-ecg-hr'
+Measurement tool QRS Axis: 'measure-ecg-qrs'
+Measurement tool Myocardium ROI: 'measure-myocardium-roi'
+Measurement tool Mask: 'measure-rectangle-mask'
+Measurement tool Repulsor: 'measure-repulsor'
+Measurement tool Intensity: 'measure-intensity'
+```
+
 #### Select measurement to edit
 ```js
-viewerCommunication.selectMeasurementToEdit(containerId, measurementId, opts);
+viewerCommunication.selectMeasurementToEdit(containerId, measurementId, parameters);
 ```
 
 Parameters:
 
 - `containerId` - Viewport container id in which measurement should be edited.
 - `measurementId` - An ID of measurement to be selected.
-- `opts` - Additional parameters depending on type of measurement being selected.
+- `parameters` - Additional parameters object depending on type of measurement being selected.
 
-Opts data object example for `myocardium-roi-annotation`:
+Parameters data object example for `myocardium-roi-annotation`:
 
 ```js
-const opts = {
+const parameters = {
     toolId: 'repulsor',
     hoveredRegionIndex: 1
 };
 ```
-Parameter `toolId` can be one of three possible values: `repulsor`, `draw-region`, `fill-brush`.
-Parameter `hoveredRegionIndex` indicates which region from myocardium ROI is intended to be edited with repulsor. Parameter is ignored if other tools are activated.
+
+Object parameters:
+
+- `toolId` - Parameter can be one of three possible values: `repulsor`, `draw-region`, `fill-brush`.
+- `hoveredRegionIndex` - Indicates which region from myocardium ROI is intended to be edited with repulsor. Parameter is ignored if other tools are activated.
 
 #### Change measurement display by id
 ```js
-viewerCommunication.changeMeasurementDisplayById(containerId, measurementId, opts);
+viewerCommunication.changeMeasurementDisplayById(containerId, measurementId, parameters);
 ```
 
 Allows to alter the way how myocardium ROI is displayed (changing display properties for other measurement types is not supported).
+
 Parameters:
 
 - `containerId` - Viewport container id in which measurement is visible.
 - `measurementId` - An ID of measurement to be updated.
-- `opts` - Additional parameters depending on type of measurement being updated.
+- `parameters` - Additional parameters object depending on type of measurement being updated.
 
-Opts data object example for `myocardium-roi-annotation`:
+Parameters data object example for `myocardium-roi-annotation`:
 
 ```js
-const opts = {
+const parameters = {
     show: false,
     sendToFront: false
 };
 ```
-Parameter `show` is of boolean type. If true - respective myocardium ROI should be made visible.
-If false - it should be hidden.
-Parameter `sendToFront` is optional. If provided and its value is true, then respective myocardium ROI should be brought to top in Z-order.
+
+Object parameters:
+
+- `show` Parameter is of boolean type. If true - respective myocardium ROI should be made visible. If false - it should be hidden.
+- `sendToFront` Parameter is optional. If provided and its value is true, then respective myocardium ROI should be brought to top in Z-order.
 
 #### Initiate create measurement
 ```js
@@ -714,6 +843,37 @@ viewerCommunication.applyNextHangingProtocolCategory();
 ```js
 viewerCommunication.applyNextHangingProtocolCP();
 ```
+
+#### Toggle Create Virtual Series modal dialog
+```js
+viewerCommunication.toggleVirtualSeriesDialog(actionData);
+```
+
+Submits a request to show (or hide) a Create Virtual Series dialog.
+
+Parameters:
+
+- `actionData`. An arguments to be passed over to the dialog.
+
+actionData data object example:
+
+```js
+const actionData = {
+    action: 'show',
+    studyUid: '1.3.12.2.1107__STORAGE_ID1',
+    fromSeries: [
+        '1.3.12.2.1107__5064.0.0.0__STORAGE_ID1',
+        '1.3.12.2.1107__5064.0.0.1__STORAGE_ID1'
+    ]
+};
+```
+
+All parameters are optional. If no parameters have been provided, the application will check if there is any open instance in active viewport,
+and will open a Create Virtual Series dialog, linked to that instance and that viewport.
+Parameter `action` can have two values: 'show' or 'hide'. If parameter is omitted, this is treated as request to show the dialog.
+Parameter `studyUid` goes together with parameter `fromSeries`. Either none of them is provided, or both must be present.
+The `studyUid` indicates the study, where new virtual series should be added. The `fromSeries` indicates what series must be displayed in
+Create Virtual Series dialog (and all of them will be displayed as pre-selected).
 
 ### Events
 #### Subscribe communication service ready event
@@ -819,6 +979,21 @@ Parameter:
 #### Unsubscribe study loaded event
 ```js
 viewerCommunication.unsubscribeStudyLoadedEvent();
+```
+
+#### Subscribe study is cached event
+```js
+const callback = (study) => console.log(study);
+viewerCommunication.subscribeStudyIsCachedEvent(callback);
+```
+
+Parameter:
+
+- `callback` - Callback function which is called when event is triggered.
+
+#### Unsubscribe study is cached event
+```js
+viewerCommunication.unsubscribeStudyIsCachedEvent();
 ```
 
 #### Subscribe annotations save started event
@@ -1001,6 +1176,75 @@ Parameter:
 viewerCommunication.unsubscribeGetListOfAvailableHpForStudy();
 ```
 
+#### Create virtual series
+```js
+const callback = ({status, details}) => console.log(status, details);
+viewerCommunication.subscribeCreateVirtualSeriesCompletedEvent(callback);
+viewerCommunication.createVirtualSeries(actionData);
+```
+
+The function requests creating virtual series from provided arguments.
+Parameters:
+
+- `actionData` - Arguments to pass over to virtual series builder.
+
+actionData data object example:
+
+```js
+const actionData = {
+    studyUid: '1.3.12.2.1107__STORAGE_ID1',
+    fromSeries: [
+        '1.3.12.2.1107__5064.0.0.0__STORAGE_ID1',
+        '1.3.12.2.1107__5064.0.0.1__STORAGE_ID1'
+    ],
+    postActions: {
+        openIn: 'viewport-container-1-1-1-2'
+    }
+};
+```
+
+Parameter `studyUid` is an UID of the study, where new virtual series have to be added.
+Parameter `fromSeries` is an array of strings. Each string represents an UID of a series from target study.
+Parameter `postActions` is optional. If provided, it is a JSON structure with a field, named `openIn`. The field is a container ID,
+where newly created series should be opened up right after creating the series. If parameter is not provided, created series will not be
+opened up in any viewport.
+
+The callback will receive an object with two fields:
+- `status`. This is a string, identifying whether an operation to create virtual series succeeded or failed. There are two possible values here:
+  'success' or 'error'.
+- `details`. In case the operation has failed, it contains a string, describing a reason of failure.
+  In case an operation was successfull, a JSON object will be returned, containing two fields:
+- `studyUid` (the UID of the study, where new series have been added)
+- `seriesUid` (the UID of new series)
+
+Usage:
+
+- Register **subscribeCreateVirtualSeriesCompletedEvent** **_callback_** function.
+- Call **_createVirtualSeries_** function to request creating new virtual series.
+- Once message is processed, **_callback_** function will be triggered with result of operation.
+
+#### Subscribe to event by event name
+```js
+const eventName = 'image-position-changed';
+const callback = (eventParams) => console.log(eventParams);
+viewerCommunication.subscribeEventByName(eventName, callback);
+```
+
+Parameter:
+
+- `eventName` - The name of event to subscribe to. See documentation to viewports-core library, `CORE_EVENTS` for a list of available events.
+- `callback` - Callback function which is called when event is triggered. All arguments from fired event are assembled into single array, in the order of original appearance.
+
+#### Unsubscribe from event by event name
+```js
+const eventName = 'image-position-changed';
+viewerCommunication.unsubscribeEventByName(eventName);
+```
+
+Parameter:
+
+- `eventName` - The name of event to unsubscribe from.
+
 ## Measurement coordinates conversion
 To ensure correct measurement recreation from data, all our measurement related functions and events work or provide 3D coordinates in patient coordinate system.
 If you need to convert received 3D coordinate to instance 2D coordinate, you can use following function:
@@ -1040,113 +1284,42 @@ function get3DImagePositionFrom2D (position2d) {
 }
 ```
 
-#### Create virtual series
-```js
-const callback = ({status, details}) => console.log(status, details);
-viewerCommunication.subscribeCreateVirtualSeriesCompletedEvent(callback);
-viewerCommunication.createVirtualSeries(operationArgs);
-```
-
-The function requests creating virtual series from provided arguments.
-Parameters:
-
-- `operationArgs` - Arguments to pass over to virtual series builder.
-
-operationArgs data object example:
-
-```js
-const operationArgs = {
-    studyUid: '1.3.12.2.1107__STORAGE_ID1',
-    fromSeries: [
-        '1.3.12.2.1107__5064.0.0.0__STORAGE_ID1',
-        '1.3.12.2.1107__5064.0.0.1__STORAGE_ID1'
-    ],
-    postActions: {
-        openIn: 'viewport-container-1-1-1-2'
-    }
-};
-```
-Parameter `studyUid` is an UID of the study, where new virtual series have to be added.
-Parameter `fromSeries` is an array of strings. Each string represents an UID of a series from target study.
-Parameter `postActions` is optional. If provided, it is a JSON structure with a field, named `openIn`. The field is a container ID,
-where newly created series should be opened up right after creating the series. If parameter is not provided, created series will not be
-opened up in any viewport.
-
-The callback will receive an object with two fields:
-- `status`. This is a string, identifying whether an operation to create virtual series succeeded or failed. There are two possible values here:
-'success' or 'error'.
-- `details`. In case the operation has failed, it contains a string, describing a reason of failure.
-In case an operation was successfull, a JSON object will be returned, containing two fields:
-- `studyUid` (the UID of the study, where new series have been added)
-- `seriesUid` (the UID of new series)
-
-Usage:
-
-- Register **subscribeCreateVirtualSeriesCompletedEvent** **_callback_** function.
-- Call **_createVirtualSeries_** function to request creating new virtual series.
-- Once message is processed, **_callback_** function will be triggered with result of operation.
-
-#### Toggle Create Virtual Series modal dialog
-```js
-viewerCommunication.toggleVirtualSeriesDialog(actionArgs);
-```
-
-Submits a request to show (or hide) a Create Virtual Series dialog.
-Parameters:
-- `actionArgs`. An arguments to be passed over to the dialog.
-
-actionArgs data object example:
-
-```js
-const actionArgs = {
-    action: 'show',
-    studyUid: '1.3.12.2.1107__STORAGE_ID1',
-    fromSeries: [
-        '1.3.12.2.1107__5064.0.0.0__STORAGE_ID1',
-        '1.3.12.2.1107__5064.0.0.1__STORAGE_ID1'
-    ]
-};
-```
-All parameters are optional. If no parameters have been provided, the application will check if there is any open instance in active viewport,
-and will open a Create Virtual Series dialog, linked to that instance and that viewport.
-Parameter `action` can have two values: 'show' or 'hide'. If parameter is omitted, this is treated as request to show the dialog.
-Parameter `studyUid` goes together with parameter `fromSeries`. Either none of them is provided, or both must be present.
-The `studyUid` indicates the study, where new virtual series should be added. The `fromSeries` indicates what series must be displayed in
-Create Virtual Series dialog (and all of them will be displayed as pre-selected).
-
-#### Subscribe to event by event name
-```js
-const eventName = 'image-position-changed';
-const callback = (eventParams) => console.log(eventParams);
-viewerCommunication.subscribeEventByName(eventName, actionArgs);
-```
-
-Parameter:
-- `eventName` - The name of event to subscribe to. See documentation to viewports-core library, `CORE_EVENTS` for a list of available events.
-- `callback` - Callback function which is called when event is triggered. All arguments from fired event are assembled into single array, in the order of original appearance.
-
-#### Unsubscribe from event by event name
-```js
-const eventName = 'image-position-changed';
-viewerCommunication.unsubscribeEventByName(eventName);
-```
-
-Parameter:
-- `eventName` - The name of event to unsubscribe from.
-
-#### Click measurement tool menu item
-```js
-const actionArgs = {toolId: 'measure-line'};
-viewerCommunication.clickMeasurementTool(actionArgs);
-```
-
-Parameter:
-- `actionArgs`. An object with `toolId` field, identifying the measurement tool to be activated/deactivated.
-Note the tools available to manipulate via this call are exactly the same as in Measurements menu (i.e., if you
-can't see a menu item in Measurements menu - then this user would be able to invoke respective measurement via
-communication API).
-
 ## Change log
+### 1.0.42 (2025-06-18)
+#### Changes
+- Added missing `Click measurement tool` documentation section with information about `clickMeasurementTool` function.
+
+### 1.0.41 (2025-06-03)
+#### Changes
+- Updated library example file.
+- Updated `openInstance` function documentation.
+- Updated `selectMeasurementToEdit` function documentation.
+- Updated `setSuggestedAnnotationNames` function documentation.
+- Updated `changeMeasurementDisplayById` function documentation.
+- Updated `clickMeasurementTool` function documentation with supported measurements tools list.
+
+#### Breaking changes
+- Removed `openInstanceExt` function, use `openInstance` function instead.
+- Updated `openInstance` function to accept object with parameters. Function right now supports different panels and different type of instance uid's.
+- Updated `setSuggestedAnnotationNames` to accept array with annotation names instead of object.
+- Updated `clickMeasurementTool` function to accept tool id string instead of object.
+
+### 1.0.40 (2025-04-16)
+#### Changes
+- Added `setSuggestedAnnotationNames` function to pass a list of suggested names for segmenting annotations.
+
+### 1.0.39 (2025-02-28)
+#### Changes
+- Added `subscribeStudyIsCachedEvent` function to subscribe of study is cached event callback.
+- Added `unsubscribeStudyIsCachedEvent` function to unsubscribe of study is cached event callback.
+- Updated `preloadStudies` function for study and token integrations to allow preloading thumbnails with `preloadThumbnails` parameter.
+- Updated `getOpenedStudies` function callback with information if study is visible or hidden.
+
+### 1.0.38 (2025-02-21)
+#### Changes
+- Added `showStudies` function to show hidden thumbnail studies.
+- Added `hideStudies` function to hide visible thumbnail studies.
+
 ### 1.0.37 (2025-01-16)
 #### Changes
 - Updated project license.

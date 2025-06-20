@@ -72,6 +72,9 @@
                 case 'STUDY_LOADED':
                     this.performOnStudyLoadedCallback(actionData);
                     break;
+                case 'STUDY_IS_CACHED':
+                    this.performOnStudyIsCachedCallback(actionData);
+                    break;
                 case 'ANNOTATIONS_SAVE_STARTED':
                     this.performOnAnnotationsSaveStartedCallback(actionData);
                     break;
@@ -167,6 +170,12 @@
         functions.performOnStudyLoadedCallback = function (actionData) {
             if (callbacks.onStudyLoadedCallback) {
                 callbacks.onStudyLoadedCallback(actionData);
+            }
+        }
+
+        functions.performOnStudyIsCachedCallback = function (actionData) {
+            if (callbacks.onStudyIsCachedCallback) {
+                callbacks.onStudyIsCachedCallback(actionData);
             }
         }
 
@@ -273,12 +282,20 @@
                 this.postActionMessage('REPLACE_STUDIES', {studies});
             };
 
-            functions.preloadStudies = function (studies) {
-                this.postActionMessage('PRELOAD_STUDIES', {studies});
+            functions.preloadStudies = function (studies, preloadThumbnails) {
+                this.postActionMessage('PRELOAD_STUDIES', {studies, preloadThumbnails});
             };
 
             functions.cacheStudies = function (studies) {
                 this.postActionMessage('CACHE_STUDIES', {studies});
+            };
+
+            functions.showStudies = function (studies) {
+                this.postActionMessage('SHOW_STUDIES', {studies});
+            };
+
+            functions.hideStudies = function (studies) {
+                this.postActionMessage('HIDE_STUDIES', {studies});
             };
 
             functions.closeStudies = function (studies) {
@@ -295,12 +312,20 @@
                 this.postActionMessage('REPLACE_STUDIES_WITH_TOKEN', {token});
             };
 
-            functions.preloadStudies = function (token) {
-                this.postActionMessage('PRELOAD_STUDIES_WITH_TOKEN', {token});
+            functions.preloadStudies = function (token, preloadThumbnails) {
+                this.postActionMessage('PRELOAD_STUDIES_WITH_TOKEN', {token, preloadThumbnails});
             };
 
             functions.cacheStudies = function (token) {
                 this.postActionMessage('CACHE_STUDIES_WITH_TOKEN', {token});
+            };
+
+            functions.showStudies = function (token) {
+                this.postActionMessage('SHOW_STUDIES_WITH_TOKEN', {token});
+            };
+
+            functions.hideStudies = function (token) {
+                this.postActionMessage('HIDE_STUDIES_WITH_TOKEN', {token});
             };
 
             functions.closeStudies = function (token) {
@@ -328,12 +353,8 @@
             this.postActionMessage('SET_LAYOUT', {columns, rows});
         };
 
-        functions.openInstance = function (instanceUid, viewportColumn, viewportRow, viewportActions) {
-            this.postActionMessage('OPEN_INSTANCE', {instanceUid, viewportColumn, viewportRow, viewportActions});
-        };
-
-        functions.openInstanceExt = function (openArgs) {
-            this.postActionMessage('OPEN_INSTANCE_EXT', openArgs);
+        functions.openInstance = function (actionData) {
+            this.postActionMessage('OPEN_INSTANCE', actionData);
         };
 
         functions.exportInstance = function (viewportColumn, viewportRow) {
@@ -343,6 +364,10 @@
         functions.updateSegmentationToolPermissions = function (permissions) {
             this.postActionMessage('UPDATE_SEGMENTATION_TOOL_PERMISSIONS', {permissions});
         };
+
+        functions.setSuggestedAnnotationNames = function (suggestedNames) {
+            this.postActionMessage('SET_SUGGESTED_ANNOTATION_NAMES', {suggestedNames});
+        }
 
         functions.getOpenedStudies = function () {
             this.postActionMessage('GET_OPENED_STUDIES');
@@ -404,6 +429,10 @@
             this.postActionMessage('CREATE_NEW_MEASUREMENT', {containerId, measurementData});
         };
 
+        functions.updateMeasurement = function (containerId, measurementData) {
+            this.postActionMessage('UPDATE_MEASUREMENT', {containerId, measurementData});
+        }
+
         functions.deleteMeasurementById = function (measurementId) {
             this.postActionMessage('DELETE_MEASUREMENT_BY_ID', {measurementId});
         };
@@ -428,24 +457,20 @@
             this.postActionMessage('APPLY_NEXT_HANGING_PROTOCOL_CP');
         };
 
-        functions.updateMeasurement = function (containerId, measurementData) {
-            this.postActionMessage('UPDATE_MEASUREMENT_BY_ID', {containerId, measurementData});
-        }
-
         functions.initiateCreateMeasurement = function (containerId, measurementType) {
             this.postActionMessage('INITIATE_CREATE_MEASUREMENT', {containerId, measurementType});
         };
 
-        functions.selectMeasurementToEdit = function (containerId, measurementId, opts = {}) {
-            this.postActionMessage('SELECT_MEASUREMENT_TO_EDIT', {containerId, measurementId, opts});
+        functions.selectMeasurementToEdit = function (containerId, measurementId, parameters = {}) {
+            this.postActionMessage('SELECT_MEASUREMENT_TO_EDIT', {containerId, measurementId, parameters});
         };
 
-        functions.changeMeasurementDisplayById = function (containerId, measurementId, opts = {}) {
-            this.postActionMessage('CHANGE_MEASUREMENT_DISPLAY_BY_ID', {containerId, measurementId, opts});
+        functions.changeMeasurementDisplayById = function (containerId, measurementId, parameters = {}) {
+            this.postActionMessage('CHANGE_MEASUREMENT_DISPLAY_BY_ID', {containerId, measurementId, parameters});
         };
 
-        functions.clickMeasurementTool = function (actionArgs) {
-            this.postActionMessage('SIMULATE_MEASUREMENT_ACTION', actionArgs);
+        functions.clickMeasurementTool = function (toolId) {
+            this.postActionMessage('SIMULATE_MEASUREMENT_ACTION', {toolId});
         }
 
         functions.subscribeEvent = function (eventType) {
@@ -528,6 +553,16 @@
         functions.unsubscribeStudyLoadedEvent = function () {
             callbacks.onStudyLoadedCallback = undefined;
             this.unsubscribeEvent('STUDY_LOADED');
+        };
+
+        functions.subscribeStudyIsCachedEvent = function (callback) {
+            callbacks.onStudyIsCachedCallback = callback;
+            this.subscribeEvent('STUDY_IS_CACHED');
+        };
+
+        functions.unsubscribeStudyIsCachedEvent = function () {
+            callbacks.onStudyIsCachedCallback = undefined;
+            this.unsubscribeEvent('STUDY_IS_CACHED');
         };
 
         functions.subscribeAnnotationsSaveStartedEvent = function (callback) {
@@ -650,8 +685,8 @@
             this.unsubscribeEvent(eventName);
         };
 
-        functions.createVirtualSeries = function (actionArgs) {
-            this.postActionMessage('CREATE_VIRTUAL_SERIES', actionArgs);
+        functions.createVirtualSeries = function (actionData) {
+            this.postActionMessage('CREATE_VIRTUAL_SERIES', actionData);
         };
 
         functions.subscribeCreateVirtualSeriesCompletedEvent = function (callback) {
@@ -662,8 +697,8 @@
             callbacks.onCreateVirtualSeriesCompletedCallback = undefined;
         }
 
-        functions.toggleVirtualSeriesDialog = function (actionArgs) {
-            this.postActionMessage('TOGGLE_VIRTUAL_SERIES_DIALOG', actionArgs);
+        functions.toggleVirtualSeriesDialog = function (actionData) {
+            this.postActionMessage('TOGGLE_VIRTUAL_SERIES_DIALOG', actionData);
         }
 
         functions.getIntegrationType = function () {
@@ -678,6 +713,8 @@
             functions.replaceStudies = undefined;
             functions.preloadStudies = undefined;
             functions.cacheStudies = undefined;
+            functions.showStudies = undefined;
+            functions.hideStudies = undefined;
             functions.closeStudies = undefined;
             this.addIntegrationFunctions();
         };
