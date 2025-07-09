@@ -15,6 +15,7 @@
 		viewerCommunication.subscribeGetSnapshotEvent(onGetSnapshot);
 		viewerCommunication.subscribeCreateVirtualSeriesCompletedEvent(onGetDataCallback);
 		viewerCommunication.subscribeGetListOfAvailableHpForStudy(onGetHpList);
+		viewerCommunication.subscribeGetCurrentlyAvailableTopMenuItems(onGetAvailableTopMenuItems);
 		const subscriptions = {};
 
 		function onOpeningTypeChange () {
@@ -381,6 +382,10 @@
 			viewerCommunication.getListOfAvailableHpForStudy();
 		}
 
+		function getCurrentlyAvailableTopMenuItems () {
+			viewerCommunication.getCurrentlyAvailableTopMenuItems();
+		}
+
 		function onGetHpList (hpList) {
 			console.log(hpList);
 
@@ -392,6 +397,10 @@
 				option.text = protocol.label;
 				selectElement.appendChild(option);
 			});
+		}
+
+		function onGetAvailableTopMenuItems (namesList) {
+			console.log('menu items list', namesList);
 		}
 
 		function applyHangingProtocol () {
@@ -571,6 +580,11 @@
 		function clickMeasurementTool () {
 			const inputData = getInputData(document.getElementById('eventBodyInput'));
 			viewerCommunication.clickMeasurementTool(inputData.toolId);
+		}
+
+		function clickTopMenuAction () {
+			const eventBodyInput = document.getElementById('eventBodyInput').value.trim();
+			viewerCommunication.clickTopMenuAction(eventBodyInput);
 		}
 
 		function performCreateVirtualSeries () {
@@ -1045,6 +1059,12 @@
 			<label>Virtual series actions:</label>
 			<button type='button' onClick='performCreateVirtualSeries()'>Create virtual series</button>
 			<button type='button' onClick='performToggleVirtualSeriesDialog()'>Toggle virtual series create dialog</button>
+		</div>
+		<br>
+		<div>
+			<label>Top menu actions:</label>
+			<button type='button' onclick='getCurrentlyAvailableTopMenuItems()'>Get currently available top menu items</button>
+			<button type='button' onClick='clickTopMenuAction()'>Click top menu action</button>
 		</div>
 	</div>
 	<iframe id='medDreamIframe' title='medDreamIframe' width='100%' height='550px' style='display: none;'></iframe>
