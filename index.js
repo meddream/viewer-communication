@@ -111,6 +111,9 @@
                 case 'CREATE_VIRTUAL_SERIES_COMPLETED':
                     this.performOnCreateVirtualSeriesCompletedCallback(actionData);
                     break;
+                case 'GET_CURRENTLY_AVAILABLE_TOP_MENU_ITEMS':
+                    this.performOnGetCurrentlyAvailableTopMenuItemsCallback(actionData);
+                    break;
                 default:
                     if (callbacks[actionType]) {
                         callbacks[actionType](actionData);
@@ -164,6 +167,12 @@
         functions.performOnGetListOfAvailableHpForStudyCallback = function (actionData) {
             if (callbacks.onGetListOfAvailableHpForStudyCallback) {
                 callbacks.onGetListOfAvailableHpForStudyCallback(actionData);
+            }
+        }
+
+        functions.performOnGetCurrentlyAvailableTopMenuItemsCallback = function (actionData) {
+            if (callbacks.onGetCurrentlyAvailableTopMenuItemsCallback) {
+                callbacks.onGetCurrentlyAvailableTopMenuItemsCallback(actionData);
             }
         }
 
@@ -457,6 +466,10 @@
             this.postActionMessage('APPLY_NEXT_HANGING_PROTOCOL_CP');
         };
 
+        functions.getCurrentlyAvailableTopMenuItems = function () {
+            this.postActionMessage('GET_CURRENTLY_AVAILABLE_TOP_MENU_ITEMS');
+        };
+
         functions.initiateCreateMeasurement = function (containerId, measurementType) {
             this.postActionMessage('INITIATE_CREATE_MEASUREMENT', {containerId, measurementType});
         };
@@ -471,6 +484,10 @@
 
         functions.clickMeasurementTool = function (toolId) {
             this.postActionMessage('SIMULATE_MEASUREMENT_ACTION', {toolId});
+        }
+        
+        functions.clickTopMenuAction = function (actionId) {
+            this.postActionMessage('SIMULATE_TOP_MENU_ACTION', actionId);
         }
 
         functions.subscribeEvent = function (eventType) {
@@ -543,6 +560,14 @@
 
         functions.unsubscribeGetListOfAvailableHpForStudy = function () {
             callbacks.onGetListOfAvailableHpForStudyCallback = undefined;
+        };
+
+        functions.subscribeGetCurrentlyAvailableTopMenuItems = function (callback) {
+            callbacks.onGetCurrentlyAvailableTopMenuItemsCallback = callback;
+        };
+
+        functions.unsubscribeGetCurrentlyAvailableTopMenuItems = function () {
+            callbacks.onGetCurrentlyAvailableTopMenuItemsCallback = undefined;
         };
 
         functions.subscribeStudyLoadedEvent = function (callback) {

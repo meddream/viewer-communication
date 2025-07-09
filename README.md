@@ -1,5 +1,5 @@
 # MedDream Viewer Communication API
-##### Version 1.0.42 (2025-06-18)
+##### Version 1.0.43 (2025-07-08)
 
 ## Add component to your project
 Import and create new Viewer Communication component in your project:
@@ -318,10 +318,10 @@ Parameters:
 #### Open instance
 ```js
 viewerCommunication.openInstance({
-    instanceUid, 
-    panelId, 
-    viewportColumn, 
-    viewportRow, 
+    instanceUid,
+    panelId,
+    viewportColumn,
+    viewportRow,
     viewportActions
 });
 ```
@@ -1284,7 +1284,50 @@ function get3DImagePositionFrom2D (position2d) {
 }
 ```
 
+#### Get list of menu actions, available for clicking for currently active viewport.
+The array of action identifiers will be returned to callback, subscribed via `subscribeGetCurrentlyAvailableTopMenuItems`.
+
+```js
+viewerCommunication.getCurrentlyAvailableTopMenuItems();
+```
+
+#### Subscribe to get a list of menu actions, available for clicking for currently active viewport.
+```js
+const callback = (data) => console.log(data);
+viewerCommunication.subscribeGetCurrentlyAvailableTopMenuItems(callback);
+```
+
+Parameter:
+
+- `callback` - Callback function which is called when event is triggered.
+
+#### Unsubscribe to get a list of top menu actions event
+```js
+viewerCommunication.unsubscribeGetCurrentlyAvailableTopMenuItems();
+```
+
+
+#### Click top menu item
+```js
+viewerCommunication.clickTopMenuAction(actionId);
+```
+
+Parameter:
+
+- `actionId` - An ID of menu item to be 'clicked'. The list of available menu action varies - it depends on currently active viewport
+and other system settings (e.g., menu items can be explicitly hidden via your settings). It is possible to check what actions are available
+by calling `getCurrentlyAvailableTopMenuItems`.
+
+
+
 ## Change log
+### 1.0.43 (2025-07-08)
+#### Changes
+- Added function `clickTopMenuAction` to simulate a click on a menu item from top toolbar.
+- Added function `getCurrentlyAvailableTopMenuItems` to request obtaining a list of top menu items, available for currently selected viewport.
+- Added `subscribeGetCurrentlyAvailableTopMenuItems` function to subscribe of list of available top menu items event callback.
+- Added `unsubscribeGetCurrentlyAvailableTopMenuItems` function to unsubscribe of list of available top menu items event callback.
+
 ### 1.0.42 (2025-06-18)
 #### Changes
 - Added missing `Click measurement tool` documentation section with information about `clickMeasurementTool` function.
