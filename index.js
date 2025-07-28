@@ -114,6 +114,9 @@
                 case 'GET_CURRENTLY_AVAILABLE_TOP_MENU_ITEMS':
                     this.performOnGetCurrentlyAvailableTopMenuItemsCallback(actionData);
                     break;
+                case 'CREATE_SEGMENTING_ANNOTATIONS_COMPLETED':
+                    this.performOnCreateSegmentingAnnotationsCompletedCallback(actionData);
+                    break;
                 default:
                     if (callbacks[actionType]) {
                         callbacks[actionType](actionData);
@@ -257,6 +260,12 @@
         functions.performOnCreateVirtualSeriesCompletedCallback = function (actionData) {
             if (callbacks.onCreateVirtualSeriesCompletedCallback) {
                 callbacks.onCreateVirtualSeriesCompletedCallback(actionData);
+            }
+        }
+
+        functions.performOnCreateSegmentingAnnotationsCompletedCallback = function (actionData) {
+            if (callbacks.onCreateSegmentingAnnotationsCompletedCallback) {
+                callbacks.onCreateSegmentingAnnotationsCompletedCallback(actionData);
             }
         }
 
@@ -485,9 +494,13 @@
         functions.clickMeasurementTool = function (toolId) {
             this.postActionMessage('SIMULATE_MEASUREMENT_ACTION', {toolId});
         }
-        
+
         functions.clickTopMenuAction = function (actionId) {
             this.postActionMessage('SIMULATE_TOP_MENU_ACTION', actionId);
+        }
+
+        functions.createSegmentingAnnotations = function (actionArgs) {
+            this.postActionMessage('CREATE_SEGMENTING_ANNOTATIONS', actionArgs);
         }
 
         functions.subscribeEvent = function (eventType) {
@@ -720,6 +733,14 @@
 
         functions.unsubscribeCreateVirtualSeriesCompletedEvent = function () {
             callbacks.onCreateVirtualSeriesCompletedCallback = undefined;
+        }
+
+        functions.subscribeCreateSegmentingAnnotationsCompletedEvent = function (callback) {
+            callbacks.onCreateSegmentingAnnotationsCompletedCallback = callback;
+        };
+
+        functions.unsubscribeCreateSegmentingAnnotationsCompletedEvent = function () {
+            callbacks.onCreateSegmentingAnnotationsCompletedCallback = undefined;
         }
 
         functions.toggleVirtualSeriesDialog = function (actionData) {

@@ -1,5 +1,5 @@
 # MedDream Viewer Communication API
-##### Version 1.0.43 (2025-07-08)
+##### Version 1.0.44 (2025-07-28)
 
 ## Add component to your project
 Import and create new Viewer Communication component in your project:
@@ -1319,8 +1319,68 @@ and other system settings (e.g., menu items can be explicitly hidden via your se
 by calling `getCurrentlyAvailableTopMenuItems`.
 
 
+#### Create a batch of segmenting annotations
+```js
+viewerCommunication.createSegmentingAnnotations(createArgs);
+```
+
+Parameter:
+
+- `createArgs` - an object with a batch of annotations to be created. For each
+
+createArgs data object example is provided below. Please note the following annotation types
+are supported: 'bounding-box', 'smart-paint' and 'free-draw'. Color field is optional. If provided, it should contain
+color code in hex format.
+
+```js
+const createArgs = {
+    annotations: [
+        {
+            studyDbUid: '1.3.6.1.4.1.44316.6',
+            seriesDbUid: '1.3.6.1.4.1.44316.6.1',
+            storageId: 'ABC',
+            label: 'Smart paint for CT#3',
+            annotationType: 'smart-paint',
+            color: '#112233'
+        }
+    ]
+};
+```
+
+#### Subscribe to get an update on creating a batch of segmenting annotations.
+```js
+const callback = (data) => console.log(data);
+viewerCommunication.subscribeCreateSegmentingAnnotationsCompletedEvent(callback);
+```
+An example of response from MD, providing details on batch operation. Status field may have three different values:
+'error', 'warning' and 'success'. In case of error or warning response, message field will detail the reason.
+In case of success, message field will contain an UID of annotation created or updated.
+```js
+const response = [
+    {
+        status: 'success',
+        message: 'c19e1de4-2d0f-442d-83ed-b47df6cbaa95__1.3.6.1.4.1.44316.6.102.1.20210419174428569.24310533793484120530__LOCAL_ORTH'
+    },
+    {
+        status: 'success',
+        message: '39747375-4d3e-48d9-bda6-b0eac3b6f2eb__1.3.6.1.4.1.44316.6.102.1.20210419174428569.24310533793484120530__LOCAL_ORTH'
+    }
+]
+```
+
+
+#### Unsubscribe from getting update on creating a batch of segmenting annotations.
+```js
+viewerCommunication.unsubscribeCreateSegmentingAnnotationsCompletedEvent();
+```
 
 ## Change log
+### 1.0.44 (2025-07-28)
+#### Changes
+- Added function `createSegmentingAnnotations` to initiate creating segmenting annotations in batch mode.
+- Added `subscribeCreateSegmentingAnnotationsCompletedEvent` function to subscribe of create a batch of segmenting annotations event callback.
+- Added `unsubscribeCreateSegmentingAnnotationsCompletedEvent` function to unsubscribe of create a batch of segmenting annotations event callback.
+
 ### 1.0.43 (2025-07-08)
 #### Changes
 - Added function `clickTopMenuAction` to simulate a click on a menu item from top toolbar.

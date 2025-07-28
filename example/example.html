@@ -16,6 +16,8 @@
 		viewerCommunication.subscribeCreateVirtualSeriesCompletedEvent(onGetDataCallback);
 		viewerCommunication.subscribeGetListOfAvailableHpForStudy(onGetHpList);
 		viewerCommunication.subscribeGetCurrentlyAvailableTopMenuItems(onGetAvailableTopMenuItems);
+		viewerCommunication.subscribeGetViewportCanvasImageBlobEvent(onGetViewportCanvasImage);
+		viewerCommunication.subscribeCreateSegmentingAnnotationsCompletedEvent(onGetCreateSegmentingAnnotationsResult);
 		const subscriptions = {};
 
 		function onOpeningTypeChange () {
@@ -285,6 +287,12 @@
 
 		function getWindowReference () {
 			console.log(viewerCommunication.getWindowReference());
+		}
+
+		let createSegmAnnotationsResult = undefined;
+		function onGetCreateSegmentingAnnotationsResult (result) {
+			createSegmAnnotationsResult = result;
+			console.log('results of create operation', result);
 		}
 
 		let showInfoLabelsValue = true;
@@ -585,6 +593,11 @@
 		function clickTopMenuAction () {
 			const eventBodyInput = document.getElementById('eventBodyInput').value.trim();
 			viewerCommunication.clickTopMenuAction(eventBodyInput);
+		}
+
+		function createSegmentingAnnotations () {
+			const inputData = getInputData(document.getElementById('eventBodyInput'));
+			viewerCommunication.createSegmentingAnnotations(inputData);
 		}
 
 		function performCreateVirtualSeries () {
@@ -1065,6 +1078,11 @@
 			<label>Top menu actions:</label>
 			<button type='button' onclick='getCurrentlyAvailableTopMenuItems()'>Get currently available top menu items</button>
 			<button type='button' onClick='clickTopMenuAction()'>Click top menu action</button>
+		</div>
+		<br>
+		<div>
+			<label>Segmentation actions</label>
+			<button type='button' onClick='createSegmentingAnnotations()'>Pre-create segmenting annotations</button>
 		</div>
 	</div>
 	<iframe id='medDreamIframe' title='medDreamIframe' width='100%' height='550px' style='display: none;'></iframe>
