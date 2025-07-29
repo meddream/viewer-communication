@@ -7,6 +7,12 @@
         let integrationType = integration === 'study' ? 'study' : 'token';
         const callbacks = {};
         const functions = {};
+        const expectedBaseURL = parseUrl(targetURL);
+
+        function parseUrl(url) {
+            const urlObject = new URL(url);
+            return `${urlObject.protocol}//${urlObject.host}`;
+        }
 
         functions.getWindowReference = function () {
             return windowReference;
@@ -38,7 +44,7 @@
         };
 
         functions.onMessageReceived = function ({data, origin}) {
-            if (origin === targetURL) {
+            if (origin === expectedBaseURL) {
                 this.performCallback(data.actionType, data.actionData);
             }
         };

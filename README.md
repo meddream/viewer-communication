@@ -1,5 +1,5 @@
 # MedDream Viewer Communication API
-##### Version 1.0.44 (2025-07-28)
+##### Version 1.0.45 (2025-07-29)
 
 ## Add component to your project
 Import and create new Viewer Communication component in your project:
@@ -1375,6 +1375,10 @@ viewerCommunication.unsubscribeCreateSegmentingAnnotationsCompletedEvent();
 ```
 
 ## Change log
+### 1.0.45 (2025-07-29)
+#### Changes
+- Fixed a bug that was blocking propagation of events for scenarios where MedDream is deployed with a context path (eg, http://mywebsite.com/meddream).
+
 ### 1.0.44 (2025-07-28)
 #### Changes
 - Added function `createSegmentingAnnotations` to initiate creating segmenting annotations in batch mode.
