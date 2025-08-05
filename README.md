@@ -1,5 +1,5 @@
 # MedDream Viewer Communication API
-##### Version 1.0.45 (2025-07-29)
+##### Version 1.0.46 (2025-08-05)
 
 ## Add component to your project
 Import and create new Viewer Communication component in your project:
@@ -750,6 +750,8 @@ Measurement tool Myocardium ROI: 'measure-myocardium-roi'
 Measurement tool Mask: 'measure-rectangle-mask'
 Measurement tool Repulsor: 'measure-repulsor'
 Measurement tool Intensity: 'measure-intensity'
+
+In case you want to turn off any possibly active measurement tool, use the following tool ID: 'apply-measurement-none'.
 ```
 
 #### Select measurement to edit
@@ -1375,6 +1377,11 @@ viewerCommunication.unsubscribeCreateSegmentingAnnotationsCompletedEvent();
 ```
 
 ## Change log
+### 1.0.46 (2025-08-05)
+#### Changes
+- Expanded the list of tool IDs, accepted by function `clickMeasurementTool`. New tool ID can be used to deactivate any measurement tool, that
+may have been made active via measurements menu or communications API. The ID to use is `apply-measurement-none`.
+
 ### 1.0.45 (2025-07-29)
 #### Changes
 - Fixed a bug that was blocking propagation of events for scenarios where MedDream is deployed with a context path (eg, http://mywebsite.com/meddream).
