@@ -1,5 +1,5 @@
 # MedDream Viewer Communication API
-##### Version 1.0.46 (2025-08-05)
+##### Version 1.0.47 (2025-08-19)
 
 ## Add component to your project
 Import and create new Viewer Communication component in your project:
@@ -1377,6 +1377,10 @@ viewerCommunication.unsubscribeCreateSegmentingAnnotationsCompletedEvent();
 ```
 
 ## Change log
+### 1.0.47 (2025-08-19)
+#### Changes
+- Fixed example creation issues.
+
 ### 1.0.46 (2025-08-05)
 #### Changes
 - Expanded the list of tool IDs, accepted by function `clickMeasurementTool`. New tool ID can be used to deactivate any measurement tool, that
