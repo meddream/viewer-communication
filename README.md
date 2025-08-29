@@ -1,5 +1,5 @@
 # MedDream Viewer Communication API
-##### Version 1.0.47 (2025-08-19)
+##### Version 1.0.48 (2025-08-29)
 
 ## Add component to your project
 Import and create new Viewer Communication component in your project:
@@ -322,7 +322,8 @@ viewerCommunication.openInstance({
     panelId,
     viewportColumn,
     viewportRow,
-    viewportActions
+    viewportActions,
+    frameNumber
 });
 ```
 
@@ -334,6 +335,7 @@ Object parameters:
 - `viewportColumn` - Column number of desired viewport.
 - `viewportRow` - Row number of desired viewport.
 - `viewportActions` - Object of actions which have to be performed on viewport after instance is loaded.
+- `frameNumber` - (Optional) The number of the frame to display in a multi-frame instance.
 
 Available viewport actions:
 
@@ -1377,6 +1379,10 @@ viewerCommunication.unsubscribeCreateSegmentingAnnotationsCompletedEvent();
 ```
 
 ## Change log
+### 1.0.48 (2025-08-29)
+#### Changes
+- Added frameNumber parameter to `openInstance` function to support opening specific frames in multi-frame instances.
+
 ### 1.0.47 (2025-08-19)
 #### Changes
 - Fixed example creation issues.

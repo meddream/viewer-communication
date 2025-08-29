@@ -216,12 +216,14 @@
 				//customScale: 0.5,							//Use if custom scale
 				//alignment: 'CENTER'						//RIGHT, LEFT, CENTER
 			};
+			const frameNumber = 0; // Frames start counting from 0 in the code, but the viewer shows them starting from 1
 			viewerCommunication.openInstance({
 				instanceUid,
 				panelId,
 				viewportColumn,
 				viewportRow,
-				viewportActions
+				viewportActions,
+				frameNumber
 			});
 		}
 
