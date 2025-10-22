@@ -1,5 +1,22 @@
 # MedDream Viewer Communication API
-##### Version 1.0.48 (2025-08-29)
+##### Version 1.0.49 (2025-10-22)
+
+## Update your MedDream backend configuration
+Locate `application.properties` file in your MedDream backend location.
+Open the file with text editor and add following line:
+
+```text
+security.postMessageWhitelist=*
+```
+
+Added `postMessageWhitelist` parameter is needed to prevent MedDream viewer from receiving `postMessage` from unwanted sources.
+`*` symbol means that viewer will accept all `postMessage` commands.
+If you want to limit the viewer to accept only the whitelisted origins then you can provide origin url's seperated by `,` symbol.
+Example:
+
+```text
+security.postMessageWhitelist=https://example.com,http://localhost:8080
+```
 
 ## Add component to your project
 Import and create new Viewer Communication component in your project:
@@ -1379,6 +1396,10 @@ viewerCommunication.unsubscribeCreateSegmentingAnnotationsCompletedEvent();
 ```
 
 ## Change log
+### 1.0.49 (2025-10-22)
+#### Changes
+- Added `Update your MedDream backend configuration` documentation section with information on how to configure `postMessage` whitelist.
+
 ### 1.0.48 (2025-08-29)
 #### Changes
 - Added frameNumber parameter to `openInstance` function to support opening specific frames in multi-frame instances.
