@@ -429,6 +429,10 @@
             this.postActionMessage('UPDATE_BUTTON_VISIBILITY', {buttonVisibility});
         };
 
+		functions.setMultiframeFpsRatio = function (fpsRatio) {
+			this.postActionMessage('SET_MULTIFRAME_FPS_RATIO', {fpsRatio});
+		};
+
         functions.setAdditionalInfoLabels = function (labels) {
             this.postActionMessage('SET_ADDITIONAL_INFO_LABELS', {labels});
         };
