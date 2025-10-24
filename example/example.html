@@ -290,9 +290,9 @@
 			console.log(viewerCommunication.getWindowReference());
 		}
 
-		let createSegmAnnotationsResult = undefined;
+		let createSegmentationAnnotationsResult = undefined;
 		function onGetCreateSegmentingAnnotationsResult (result) {
-			createSegmAnnotationsResult = result;
+			createSegmentationAnnotationsResult = result;
 			console.log('results of create operation', result);
 		}
 
@@ -378,6 +378,10 @@
 				},
 			]
 			viewerCommunication.setCustomTags(exampleTags);
+		}
+
+		function setMultiframeRatio () {
+			viewerCommunication.setMultiframeFpsRatio(0.5)
 		}
 
 		function generateInstanceMpr (containerId) {
@@ -989,6 +993,10 @@
 			<button type='button' onclick='setAdditionalTopInfoLabels()'>Set additional top info labels</button>
 			<button type='button' onclick='setCustomStudyLabel()'>Set custom study label</button>
 			<button type='button' onclick='setCustomTags()'>Set custom study and series tags</button>
+			<button type='button' onclick='setMultiframeRatio()'>Set multiframe FPS ratio to 0.5</button>
+		</div>
+		<br>
+		<div>
 			<button type='button' onclick='generateInstanceMpr("viewport-container-1-1-1-1")'>Generate instance MPR</button>
 			<button type='button' onclick='changeViewportOrientation("viewport-container-1-1-1-1", "AXIAL")'>Create MPR Axial</button>
 			<button type='button' onclick='changeViewportOrientation("viewport-container-1-1-1-1", "SAGITTAL")'>Create MPR Sagittal</button>

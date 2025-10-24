@@ -1,5 +1,5 @@
 # MedDream Viewer Communication API
-##### Version 1.0.49 (2025-10-22)
+##### Version 1.0.50 (2025-10-24)
 
 ## Update your MedDream backend configuration
 Locate `application.properties` file in your MedDream backend location.
@@ -559,6 +559,15 @@ const buttonsVisibility = {
 }
 ```
 
+#### Set multiframe fps ratio
+```js
+viewerCommunication.setMultiframeFpsRatio(fpsRatio);
+```
+
+Parameter:
+
+- `fpsRatio` - Number of new multiframe fps ratio. Default value: `1`.
+
 #### Show info labels
 ```js
 viewerCommunication.showInfoLabels(value);
@@ -566,7 +575,7 @@ viewerCommunication.showInfoLabels(value);
 
 Parameter:
 
-- `value` - boolean to show or hide viewports labels.
+- `value` - Boolean to show or hide viewports labels.
 
 #### Set additional info labels
 ```js
@@ -1396,6 +1405,10 @@ viewerCommunication.unsubscribeCreateSegmentingAnnotationsCompletedEvent();
 ```
 
 ## Change log
+### 1.0.50 (2025-10-24)
+#### Changes
+- Added `setMultiframeFpsRatio` function to control multiframe fps ratio.
+
 ### 1.0.49 (2025-10-22)
 #### Changes
 - Added `Update your MedDream backend configuration` documentation section with information on how to configure `postMessage` whitelist.
