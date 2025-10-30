@@ -465,6 +465,14 @@
 			this.postActionMessage('DELETE_MEASUREMENT_BY_ID', {measurementId});
 		};
 
+		functions.markMeasurementById = function (containerId, measurementId) {
+			this.postActionMessage('MARK_MEASUREMENT_BY_ID', {containerId, measurementId});
+		};
+
+		functions.unmarkMeasurementById = function (containerId, measurementId) {
+			this.postActionMessage('UNMARK_MEASUREMENT_BY_ID', {containerId, measurementId});
+		};
+
 		functions.getListOfAvailableHpForStudy = function () {
 			this.postActionMessage('GET_LIST_OF_AVAILABLE_HP_FOR_STUDY');
 		};

@@ -579,6 +579,40 @@
 			viewerCommunication.deleteMeasurementById(inputData.id);
 		}
 
+		function performMarkMeasurementById () {
+			const inputData = getInputData(document.getElementById('eventBodyInput'));
+			if (!inputData) {
+				const exampleData = {
+					containerId: 'viewport-container-1-1-1-1',
+					measurementId: 'closed-polygon-1',
+				};
+				setInputData(document.getElementById('eventBodyInput'), exampleData);
+			}
+			markMeasurementById();
+		}
+
+		function markMeasurementById () {
+			const inputData = getInputData(document.getElementById('eventBodyInput'));
+			viewerCommunication.markMeasurementById(inputData.containerId, inputData.measurementId);
+		}
+
+		function performUnmarkMeasurementById () {
+			const inputData = getInputData(document.getElementById('eventBodyInput'));
+			if (!inputData) {
+				const exampleData = {
+					containerId: 'viewport-container-1-1-1-1',
+					measurementId: 'closed-polygon-1',
+				};
+				setInputData(document.getElementById('eventBodyInput'), exampleData);
+			}
+			unmarkMeasurementById();
+		}
+
+		function unmarkMeasurementById () {
+			const inputData = getInputData(document.getElementById('eventBodyInput'));
+			viewerCommunication.unmarkMeasurementById(inputData.containerId, inputData.measurementId);
+		}
+
 		function performClickMeasurementTool () {
 			const inputData = getInputData(document.getElementById('eventBodyInput'));
 			if (!inputData) {
@@ -1074,6 +1108,8 @@
 			<button type='button' onclick='performCreateNewMeasurement()'>Create measurement from data</button>
 			<button type='button' onclick='performUpdateMeasurement()'>Update measurement by ID</button>
 			<button type='button' onclick='performDeleteMeasurementById()'>Delete measurement by ID</button>
+			<button type='button' onclick='performMarkMeasurementById()'>Mark measurement by ID</button>
+			<button type='button' onclick='performUnmarkMeasurementById()'>Unmark measurement by ID</button>
 			<button type='button' onClick='performClickMeasurementTool()'>Click measurement tool</button>
 		</div>
 		<br>
