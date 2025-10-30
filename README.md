@@ -1,5 +1,5 @@
 # MedDream Viewer Communication API
-##### Version 1.0.50 (2025-10-24)
+##### Version 1.0.51 (2025-10-30)
 
 ## Update your MedDream backend configuration
 Locate `application.properties` file in your MedDream backend location.
@@ -730,6 +730,26 @@ Parameter:
 
 - `measurementId` - Measurement id that has to be deleted.
 
+#### Mark measurement by id
+```js
+viewerCommunication.markMeasurementById(containerId, measurementId);
+```
+
+Parameters:
+
+- `containerId` - Viewport container id in which measurement should be marked.
+- `measurementId` - Measurement id that has to be marked.
+
+#### Unmark measurement by id
+```js
+viewerCommunication.unmarkMeasurementById(containerId, measurementId);
+```
+
+Parameters:
+
+- `containerId` - Viewport container id in which measurement should be unmarked.
+- `measurementId` - Measurement id that has to be unmarked.
+
 #### Click measurement tool
 ```js
 viewerCommunication.clickMeasurementTool(toolId);
@@ -1405,6 +1425,11 @@ viewerCommunication.unsubscribeCreateSegmentingAnnotationsCompletedEvent();
 ```
 
 ## Change log
+### 1.0.51 (2025-10-30)
+#### Changes
+- Added `markMeasurementById` function to mark viewport measurements.
+- Added `unmarkMeasurementById` function to unmark viewport measurements.
+
 ### 1.0.50 (2025-10-24)
 #### Changes
 - Added `setMultiframeFpsRatio` function to control multiframe fps ratio.
