@@ -1,6 +1,6 @@
 {
   "name": "@meddream/viewer-communication",
-  "version": "1.0.42",
+  "version": "1.0.52",
   "main": "index.js",
   "repository": "meddream/viewer-communication",
   "author": "UAB MedDream",

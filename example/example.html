@@ -15,6 +15,8 @@
 		viewerCommunication.subscribeGetSnapshotEvent(onGetSnapshot);
 		viewerCommunication.subscribeCreateVirtualSeriesCompletedEvent(onGetDataCallback);
 		viewerCommunication.subscribeGetListOfAvailableHpForStudy(onGetHpList);
+		viewerCommunication.subscribeGetCurrentlyAvailableTopMenuItems(onGetAvailableTopMenuItems);
+		viewerCommunication.subscribeCreateSegmentingAnnotationsCompletedEvent(onGetCreateSegmentingAnnotationsResult);
 		const subscriptions = {};
 
 		function onOpeningTypeChange () {
@@ -214,12 +216,14 @@
 				//customScale: 0.5,							//Use if custom scale
 				//alignment: 'CENTER'						//RIGHT, LEFT, CENTER
 			};
+			const frameNumber = 0; // Frames start counting from 0 in the code, but the viewer shows them starting from 1
 			viewerCommunication.openInstance({
 				instanceUid,
 				panelId,
 				viewportColumn,
 				viewportRow,
-				viewportActions
+				viewportActions,
+				frameNumber
 			});
 		}
 
@@ -284,6 +288,12 @@
 
 		function getWindowReference () {
 			console.log(viewerCommunication.getWindowReference());
+		}
+
+		let createSegmentationAnnotationsResult = undefined;
+		function onGetCreateSegmentingAnnotationsResult (result) {
+			createSegmentationAnnotationsResult = result;
+			console.log('results of create operation', result);
 		}
 
 		let showInfoLabelsValue = true;
@@ -370,6 +380,10 @@
 			viewerCommunication.setCustomTags(exampleTags);
 		}
 
+		function setMultiframeRatio () {
+			viewerCommunication.setMultiframeFpsRatio(0.5)
+		}
+
 		function generateInstanceMpr (containerId) {
 			viewerCommunication.generateInstanceMpr(containerId);
 		}
@@ -379,6 +393,10 @@
 
 		function getListOfAvailableHpForStudy () {
 			viewerCommunication.getListOfAvailableHpForStudy();
+		}
+
+		function getCurrentlyAvailableTopMenuItems () {
+			viewerCommunication.getCurrentlyAvailableTopMenuItems();
 		}
 
 		function onGetHpList (hpList) {
@@ -392,6 +410,10 @@
 				option.text = protocol.label;
 				selectElement.appendChild(option);
 			});
+		}
+
+		function onGetAvailableTopMenuItems (namesList) {
+			console.log('menu items list', namesList);
 		}
 
 		function applyHangingProtocol () {
@@ -557,6 +579,40 @@
 			viewerCommunication.deleteMeasurementById(inputData.id);
 		}
 
+		function performMarkMeasurementById () {
+			const inputData = getInputData(document.getElementById('eventBodyInput'));
+			if (!inputData) {
+				const exampleData = {
+					containerId: 'viewport-container-1-1-1-1',
+					measurementId: 'closed-polygon-1',
+				};
+				setInputData(document.getElementById('eventBodyInput'), exampleData);
+			}
+			markMeasurementById();
+		}
+
+		function markMeasurementById () {
+			const inputData = getInputData(document.getElementById('eventBodyInput'));
+			viewerCommunication.markMeasurementById(inputData.containerId, inputData.measurementId);
+		}
+
+		function performUnmarkMeasurementById () {
+			const inputData = getInputData(document.getElementById('eventBodyInput'));
+			if (!inputData) {
+				const exampleData = {
+					containerId: 'viewport-container-1-1-1-1',
+					measurementId: 'closed-polygon-1',
+				};
+				setInputData(document.getElementById('eventBodyInput'), exampleData);
+			}
+			unmarkMeasurementById();
+		}
+
+		function unmarkMeasurementById () {
+			const inputData = getInputData(document.getElementById('eventBodyInput'));
+			viewerCommunication.unmarkMeasurementById(inputData.containerId, inputData.measurementId);
+		}
+
 		function performClickMeasurementTool () {
 			const inputData = getInputData(document.getElementById('eventBodyInput'));
 			if (!inputData) {
@@ -571,6 +627,16 @@
 		function clickMeasurementTool () {
 			const inputData = getInputData(document.getElementById('eventBodyInput'));
 			viewerCommunication.clickMeasurementTool(inputData.toolId);
+		}
+
+		function clickTopMenuAction () {
+			const eventBodyInput = document.getElementById('eventBodyInput').value.trim();
+			viewerCommunication.clickTopMenuAction(eventBodyInput);
+		}
+
+		function createSegmentingAnnotations () {
+			const inputData = getInputData(document.getElementById('eventBodyInput'));
+			viewerCommunication.createSegmentingAnnotations(inputData);
 		}
 
 		function performCreateVirtualSeries () {
@@ -961,6 +1027,10 @@
 			<button type='button' onclick='setAdditionalTopInfoLabels()'>Set additional top info labels</button>
 			<button type='button' onclick='setCustomStudyLabel()'>Set custom study label</button>
 			<button type='button' onclick='setCustomTags()'>Set custom study and series tags</button>
+			<button type='button' onclick='setMultiframeRatio()'>Set multiframe FPS ratio to 0.5</button>
+		</div>
+		<br>
+		<div>
 			<button type='button' onclick='generateInstanceMpr("viewport-container-1-1-1-1")'>Generate instance MPR</button>
 			<button type='button' onclick='changeViewportOrientation("viewport-container-1-1-1-1", "AXIAL")'>Create MPR Axial</button>
 			<button type='button' onclick='changeViewportOrientation("viewport-container-1-1-1-1", "SAGITTAL")'>Create MPR Sagittal</button>
@@ -1038,6 +1108,8 @@
 			<button type='button' onclick='performCreateNewMeasurement()'>Create measurement from data</button>
 			<button type='button' onclick='performUpdateMeasurement()'>Update measurement by ID</button>
 			<button type='button' onclick='performDeleteMeasurementById()'>Delete measurement by ID</button>
+			<button type='button' onclick='performMarkMeasurementById()'>Mark measurement by ID</button>
+			<button type='button' onclick='performUnmarkMeasurementById()'>Unmark measurement by ID</button>
 			<button type='button' onClick='performClickMeasurementTool()'>Click measurement tool</button>
 		</div>
 		<br>
@@ -1045,6 +1117,17 @@
 			<label>Virtual series actions:</label>
 			<button type='button' onClick='performCreateVirtualSeries()'>Create virtual series</button>
 			<button type='button' onClick='performToggleVirtualSeriesDialog()'>Toggle virtual series create dialog</button>
+		</div>
+		<br>
+		<div>
+			<label>Top menu actions:</label>
+			<button type='button' onclick='getCurrentlyAvailableTopMenuItems()'>Get currently available top menu items</button>
+			<button type='button' onClick='clickTopMenuAction()'>Click top menu action</button>
+		</div>
+		<br>
+		<div>
+			<label>Segmentation actions</label>
+			<button type='button' onClick='createSegmentingAnnotations()'>Pre-create segmenting annotations</button>
 		</div>
 	</div>
 	<iframe id='medDreamIframe' title='medDreamIframe' width='100%' height='550px' style='display: none;'></iframe>

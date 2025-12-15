@@ -1,5 +1,22 @@
 # MedDream Viewer Communication API
-##### Version 1.0.42 (2025-06-18)
+##### Version 1.0.52 (2025-12-15)
+
+## Update your MedDream backend configuration
+Locate `application.properties` file in your MedDream backend location.
+Open the file with text editor and add following line:
+
+```text
+security.postMessageWhitelist=*
+```
+
+Added `postMessageWhitelist` parameter is needed to prevent MedDream viewer from receiving `postMessage` from unwanted sources.
+`*` symbol means that viewer will accept all `postMessage` commands.
+If you want to limit the viewer to accept only the whitelisted origins then you can provide origin url's seperated by `,` symbol.
+Example:
+
+```text
+security.postMessageWhitelist=https://example.com,http://localhost:8080
+```
 
 ## Add component to your project
 Import and create new Viewer Communication component in your project:
@@ -318,11 +335,12 @@ Parameters:
 #### Open instance
 ```js
 viewerCommunication.openInstance({
-    instanceUid, 
-    panelId, 
-    viewportColumn, 
-    viewportRow, 
-    viewportActions
+    instanceUid,
+    panelId,
+    viewportColumn,
+    viewportRow,
+    viewportActions,
+    frameNumber
 });
 ```
 
@@ -334,6 +352,7 @@ Object parameters:
 - `viewportColumn` - Column number of desired viewport.
 - `viewportRow` - Row number of desired viewport.
 - `viewportActions` - Object of actions which have to be performed on viewport after instance is loaded.
+- `frameNumber` - (Optional) The number of the frame to display in a multi-frame instance.
 
 Available viewport actions:
 
@@ -540,6 +559,15 @@ const buttonsVisibility = {
 }
 ```
 
+#### Set multiframe fps ratio
+```js
+viewerCommunication.setMultiframeFpsRatio(fpsRatio);
+```
+
+Parameter:
+
+- `fpsRatio` - Number of new multiframe fps ratio. Default value: `1`.
+
 #### Show info labels
 ```js
 viewerCommunication.showInfoLabels(value);
@@ -547,7 +575,7 @@ viewerCommunication.showInfoLabels(value);
 
 Parameter:
 
-- `value` - boolean to show or hide viewports labels.
+- `value` - Boolean to show or hide viewports labels.
 
 #### Set additional info labels
 ```js
@@ -702,6 +730,26 @@ Parameter:
 
 - `measurementId` - Measurement id that has to be deleted.
 
+#### Mark measurement by id
+```js
+viewerCommunication.markMeasurementById(containerId, measurementId);
+```
+
+Parameters:
+
+- `containerId` - Viewport container id in which measurement should be marked.
+- `measurementId` - Measurement id that has to be marked.
+
+#### Unmark measurement by id
+```js
+viewerCommunication.unmarkMeasurementById(containerId, measurementId);
+```
+
+Parameters:
+
+- `containerId` - Viewport container id in which measurement should be unmarked.
+- `measurementId` - Measurement id that has to be unmarked.
+
 #### Click measurement tool
 ```js
 viewerCommunication.clickMeasurementTool(toolId);
@@ -750,6 +798,8 @@ Measurement tool Myocardium ROI: 'measure-myocardium-roi'
 Measurement tool Mask: 'measure-rectangle-mask'
 Measurement tool Repulsor: 'measure-repulsor'
 Measurement tool Intensity: 'measure-intensity'
+
+In case you want to turn off any possibly active measurement tool, use the following tool ID: 'apply-measurement-none'.
 ```
 
 #### Select measurement to edit
@@ -1284,7 +1334,144 @@ function get3DImagePositionFrom2D (position2d) {
 }
 ```
 
+#### Get list of menu actions, available for clicking for currently active viewport.
+The array of action identifiers will be returned to callback, subscribed via `subscribeGetCurrentlyAvailableTopMenuItems`.
+
+```js
+viewerCommunication.getCurrentlyAvailableTopMenuItems();
+```
+
+#### Subscribe to get a list of menu actions, available for clicking for currently active viewport.
+```js
+const callback = (data) => console.log(data);
+viewerCommunication.subscribeGetCurrentlyAvailableTopMenuItems(callback);
+```
+
+Parameter:
+
+- `callback` - Callback function which is called when event is triggered.
+
+#### Unsubscribe to get a list of top menu actions event
+```js
+viewerCommunication.unsubscribeGetCurrentlyAvailableTopMenuItems();
+```
+
+
+#### Click top menu item
+```js
+viewerCommunication.clickTopMenuAction(actionId);
+```
+
+Parameter:
+
+- `actionId` - An ID of menu item to be 'clicked'. The list of available menu action varies - it depends on currently active viewport
+and other system settings (e.g., menu items can be explicitly hidden via your settings). It is possible to check what actions are available
+by calling `getCurrentlyAvailableTopMenuItems`.
+
+
+#### Create a batch of segmenting annotations
+```js
+viewerCommunication.createSegmentingAnnotations(createArgs);
+```
+
+Parameter:
+
+- `createArgs` - an object with a batch of annotations to be created. For each
+
+createArgs data object example is provided below. Please note the following annotation types
+are supported: 'bounding-box', 'smart-paint' and 'free-draw'. Color field is optional. If provided, it should contain
+color code in hex format.
+
+```js
+const createArgs = {
+    annotations: [
+        {
+            studyDbUid: '1.3.6.1.4.1.44316.6',
+            seriesDbUid: '1.3.6.1.4.1.44316.6.1',
+            storageId: 'ABC',
+            label: 'Smart paint for CT#3',
+            annotationType: 'smart-paint',
+            color: '#112233'
+        }
+    ]
+};
+```
+
+#### Subscribe to get an update on creating a batch of segmenting annotations.
+```js
+const callback = (data) => console.log(data);
+viewerCommunication.subscribeCreateSegmentingAnnotationsCompletedEvent(callback);
+```
+An example of response from MD, providing details on batch operation. Status field may have three different values:
+'error', 'warning' and 'success'. In case of error or warning response, message field will detail the reason.
+In case of success, message field will contain an UID of annotation created or updated.
+```js
+const response = [
+    {
+        status: 'success',
+        message: 'c19e1de4-2d0f-442d-83ed-b47df6cbaa95__1.3.6.1.4.1.44316.6.102.1.20210419174428569.24310533793484120530__LOCAL_ORTH'
+    },
+    {
+        status: 'success',
+        message: '39747375-4d3e-48d9-bda6-b0eac3b6f2eb__1.3.6.1.4.1.44316.6.102.1.20210419174428569.24310533793484120530__LOCAL_ORTH'
+    }
+]
+```
+
+
+#### Unsubscribe from getting update on creating a batch of segmenting annotations.
+```js
+viewerCommunication.unsubscribeCreateSegmentingAnnotationsCompletedEvent();
+```
+
 ## Change log
+### 1.0.52 (2025-12-15)
+#### Changes
+- Version update for MedDream 8.8.0 version release.
+
+### 1.0.51 (2025-10-30)
+#### Changes
+- Added `markMeasurementById` function to mark viewport measurements.
+- Added `unmarkMeasurementById` function to unmark viewport measurements.
+
+### 1.0.50 (2025-10-24)
+#### Changes
+- Added `setMultiframeFpsRatio` function to control multiframe fps ratio.
+
+### 1.0.49 (2025-10-22)
+#### Changes
+- Added `Update your MedDream backend configuration` documentation section with information on how to configure `postMessage` whitelist.
+
+### 1.0.48 (2025-08-29)
+#### Changes
+- Added frameNumber parameter to `openInstance` function to support opening specific frames in multi-frame instances.
+
+### 1.0.47 (2025-08-19)
+#### Changes
+- Fixed example creation issues.
+
+### 1.0.46 (2025-08-05)
+#### Changes
+- Expanded the list of tool IDs, accepted by function `clickMeasurementTool`. New tool ID can be used to deactivate any measurement tool, that
+may have been made active via measurements menu or communications API. The ID to use is `apply-measurement-none`.
+
+### 1.0.45 (2025-07-29)
+#### Changes
+- Fixed a bug that was blocking propagation of events for scenarios where MedDream is deployed with a context path (eg, http://mywebsite.com/meddream).
+
+### 1.0.44 (2025-07-28)
+#### Changes
+- Added function `createSegmentingAnnotations` to initiate creating segmenting annotations in batch mode.
+- Added `subscribeCreateSegmentingAnnotationsCompletedEvent` function to subscribe of create a batch of segmenting annotations event callback.
+- Added `unsubscribeCreateSegmentingAnnotationsCompletedEvent` function to unsubscribe of create a batch of segmenting annotations event callback.
+
+### 1.0.43 (2025-07-08)
+#### Changes
+- Added function `clickTopMenuAction` to simulate a click on a menu item from top toolbar.
+- Added function `getCurrentlyAvailableTopMenuItems` to request obtaining a list of top menu items, available for currently selected viewport.
+- Added `subscribeGetCurrentlyAvailableTopMenuItems` function to subscribe of list of available top menu items event callback.
+- Added `unsubscribeGetCurrentlyAvailableTopMenuItems` function to unsubscribe of list of available top menu items event callback.
+
 ### 1.0.42 (2025-06-18)
 #### Changes
 - Added missing `Click measurement tool` documentation section with information about `clickMeasurementTool` function.
