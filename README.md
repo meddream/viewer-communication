@@ -1,5 +1,5 @@
 # MedDream Viewer Communication API
-##### Version 1.0.51 (2025-10-30)
+##### Version 1.0.52 (2025-12-15)
 
 ## Update your MedDream backend configuration
 Locate `application.properties` file in your MedDream backend location.
@@ -1425,6 +1425,10 @@ viewerCommunication.unsubscribeCreateSegmentingAnnotationsCompletedEvent();
 ```
 
 ## Change log
+### 1.0.52 (2025-12-15)
+#### Changes
+- Version update for MedDream 8.8.0 version release.
+
 ### 1.0.51 (2025-10-30)
 #### Changes
 - Added `markMeasurementById` function to mark viewport measurements.
