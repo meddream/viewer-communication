@@ -441,6 +441,10 @@ altered under any circumstances
 			this.postActionMessage('SET_MULTIFRAME_FPS_RATIO', {fpsRatio});
 		};
 
+		functions.panViewport = function (containerId, delta) {
+			this.postActionMessage('PAN_VIEWPORT', {containerId, delta});
+		};
+
 		functions.setAdditionalInfoLabels = function (labels) {
 			this.postActionMessage('SET_ADDITIONAL_INFO_LABELS', {labels});
 		};
