@@ -392,6 +392,10 @@ altered under any circumstances
 			viewerCommunication.setMultiframeFpsRatio(0.5)
 		}
 
+		function panViewport () {
+			viewerCommunication.panViewport('viewport-container-1-1-1-1', {x: 100, y: 50})
+		}
+
 		function generateInstanceMpr (containerId) {
 			viewerCommunication.generateInstanceMpr(containerId);
 		}
@@ -1035,7 +1039,11 @@ altered under any circumstances
 			<button type='button' onclick='setAdditionalTopInfoLabels()'>Set additional top info labels</button>
 			<button type='button' onclick='setCustomStudyLabel()'>Set custom study label</button>
 			<button type='button' onclick='setCustomTags()'>Set custom study and series tags</button>
+		</div>
+		<br>
+		<div>
 			<button type='button' onclick='setMultiframeRatio()'>Set multiframe FPS ratio to 0.5</button>
+			<button type='button' onclick='panViewport()'>Pan viewport</button>
 		</div>
 		<br>
 		<div>

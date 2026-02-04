@@ -1,5 +1,5 @@
 # MedDream Viewer Communication API
-##### Version 1.0.52 (2025-12-15)
+##### Version 1.0.54 (2026-02-04)
 
 ## Update your MedDream backend configuration
 Locate `application.properties` file in your MedDream backend location.
@@ -556,7 +556,7 @@ const buttonsVisibility = {
     'dicom-tag-list': true,
     'mpr-mist-oblique': true,
     'key-object-selection': true
-}
+};
 ```
 
 #### Set multiframe fps ratio
@@ -567,6 +567,25 @@ viewerCommunication.setMultiframeFpsRatio(fpsRatio);
 Parameter:
 
 - `fpsRatio` - Number of new multiframe fps ratio. Default value: `1`.
+
+#### Pan viewport
+```js
+viewerCommunication.panViewport(containerId, delta);
+```
+
+Parameters:
+
+- `containerId` - viewport container id.
+- `delta` - Object with x and y axis pan delta.
+
+Object example:
+
+```js
+const delta = {
+    x: 10,
+    y: 15
+};
+```
 
 #### Show info labels
 ```js
@@ -924,6 +943,53 @@ Parameter `action` can have two values: 'show' or 'hide'. If parameter is omitte
 Parameter `studyUid` goes together with parameter `fromSeries`. Either none of them is provided, or both must be present.
 The `studyUid` indicates the study, where new virtual series should be added. The `fromSeries` indicates what series must be displayed in
 Create Virtual Series dialog (and all of them will be displayed as pre-selected).
+
+#### Get list of menu actions, available for clicking for currently active viewport.
+The array of action identifiers will be returned to callback, subscribed via `subscribeGetCurrentlyAvailableTopMenuItems`.
+
+```js
+viewerCommunication.getCurrentlyAvailableTopMenuItems();
+```
+
+#### Click top menu item
+```js
+viewerCommunication.clickTopMenuAction(actionId);
+```
+
+Parameter:
+
+- `actionId` - An ID of menu item to be 'clicked'. The list of available menu action varies - it depends on currently active viewport
+  and other system settings (e.g., menu items can be explicitly hidden via your settings). It is possible to check what actions are available
+  by calling `getCurrentlyAvailableTopMenuItems`.
+
+
+#### Create a batch of segmenting annotations
+```js
+viewerCommunication.createSegmentingAnnotations(createArgs);
+```
+
+Parameter:
+
+- `createArgs` - an object with a batch of annotations to be created. For each
+
+createArgs data object example is provided below. Please note the following annotation types
+are supported: 'bounding-box', 'smart-paint' and 'free-draw'. Color field is optional. If provided, it should contain
+color code in hex format.
+
+```js
+const createArgs = {
+    annotations: [
+        {
+            studyDbUid: '1.3.6.1.4.1.44316.6',
+            seriesDbUid: '1.3.6.1.4.1.44316.6.1',
+            storageId: 'ABC',
+            label: 'Smart paint for CT#3',
+            annotationType: 'smart-paint',
+            color: '#112233'
+        }
+    ]
+};
+```
 
 ### Events
 #### Subscribe communication service ready event
@@ -1295,6 +1361,49 @@ Parameter:
 
 - `eventName` - The name of event to unsubscribe from.
 
+#### Subscribe to get a list of menu actions, available for clicking for currently active viewport.
+```js
+const callback = (data) => console.log(data);
+viewerCommunication.subscribeGetCurrentlyAvailableTopMenuItems(callback);
+```
+
+Parameter:
+
+- `callback` - Callback function which is called when event is triggered.
+
+#### Unsubscribe to get a list of top menu actions event
+```js
+viewerCommunication.unsubscribeGetCurrentlyAvailableTopMenuItems();
+```
+
+#### Subscribe to get an update on creating a batch of segmenting annotations.
+```js
+const callback = (data) => console.log(data);
+viewerCommunication.subscribeCreateSegmentingAnnotationsCompletedEvent(callback);
+```
+
+An example of response from MD, providing details on batch operation. Status field may have three different values:
+'error', 'warning' and 'success'. In case of error or warning response, message field will detail the reason.
+In case of success, message field will contain an UID of annotation created or updated.
+
+```js
+const response = [
+    {
+        status: 'success',
+        message: 'c19e1de4-2d0f-442d-83ed-b47df6cbaa95__1.3.6.1.4.1.44316.6.102.1.20210419174428569.24310533793484120530__LOCAL_ORTH'
+    },
+    {
+        status: 'success',
+        message: '39747375-4d3e-48d9-bda6-b0eac3b6f2eb__1.3.6.1.4.1.44316.6.102.1.20210419174428569.24310533793484120530__LOCAL_ORTH'
+    }
+];
+```
+
+#### Unsubscribe from getting update on creating a batch of segmenting annotations.
+```js
+viewerCommunication.unsubscribeCreateSegmentingAnnotationsCompletedEvent();
+```
+
 ## Measurement coordinates conversion
 To ensure correct measurement recreation from data, all our measurement related functions and events work or provide 3D coordinates in patient coordinate system.
 If you need to convert received 3D coordinate to instance 2D coordinate, you can use following function:
@@ -1334,97 +1443,16 @@ function get3DImagePositionFrom2D (position2d) {
 }
 ```
 
-#### Get list of menu actions, available for clicking for currently active viewport.
-The array of action identifiers will be returned to callback, subscribed via `subscribeGetCurrentlyAvailableTopMenuItems`.
-
-```js
-viewerCommunication.getCurrentlyAvailableTopMenuItems();
-```
-
-#### Subscribe to get a list of menu actions, available for clicking for currently active viewport.
-```js
-const callback = (data) => console.log(data);
-viewerCommunication.subscribeGetCurrentlyAvailableTopMenuItems(callback);
-```
-
-Parameter:
-
-- `callback` - Callback function which is called when event is triggered.
-
-#### Unsubscribe to get a list of top menu actions event
-```js
-viewerCommunication.unsubscribeGetCurrentlyAvailableTopMenuItems();
-```
-
-
-#### Click top menu item
-```js
-viewerCommunication.clickTopMenuAction(actionId);
-```
-
-Parameter:
-
-- `actionId` - An ID of menu item to be 'clicked'. The list of available menu action varies - it depends on currently active viewport
-and other system settings (e.g., menu items can be explicitly hidden via your settings). It is possible to check what actions are available
-by calling `getCurrentlyAvailableTopMenuItems`.
-
-
-#### Create a batch of segmenting annotations
-```js
-viewerCommunication.createSegmentingAnnotations(createArgs);
-```
-
-Parameter:
-
-- `createArgs` - an object with a batch of annotations to be created. For each
-
-createArgs data object example is provided below. Please note the following annotation types
-are supported: 'bounding-box', 'smart-paint' and 'free-draw'. Color field is optional. If provided, it should contain
-color code in hex format.
-
-```js
-const createArgs = {
-    annotations: [
-        {
-            studyDbUid: '1.3.6.1.4.1.44316.6',
-            seriesDbUid: '1.3.6.1.4.1.44316.6.1',
-            storageId: 'ABC',
-            label: 'Smart paint for CT#3',
-            annotationType: 'smart-paint',
-            color: '#112233'
-        }
-    ]
-};
-```
-
-#### Subscribe to get an update on creating a batch of segmenting annotations.
-```js
-const callback = (data) => console.log(data);
-viewerCommunication.subscribeCreateSegmentingAnnotationsCompletedEvent(callback);
-```
-An example of response from MD, providing details on batch operation. Status field may have three different values:
-'error', 'warning' and 'success'. In case of error or warning response, message field will detail the reason.
-In case of success, message field will contain an UID of annotation created or updated.
-```js
-const response = [
-    {
-        status: 'success',
-        message: 'c19e1de4-2d0f-442d-83ed-b47df6cbaa95__1.3.6.1.4.1.44316.6.102.1.20210419174428569.24310533793484120530__LOCAL_ORTH'
-    },
-    {
-        status: 'success',
-        message: '39747375-4d3e-48d9-bda6-b0eac3b6f2eb__1.3.6.1.4.1.44316.6.102.1.20210419174428569.24310533793484120530__LOCAL_ORTH'
-    }
-]
-```
-
-
-#### Unsubscribe from getting update on creating a batch of segmenting annotations.
-```js
-viewerCommunication.unsubscribeCreateSegmentingAnnotationsCompletedEvent();
-```
-
 ## Change log
+### 1.0.54 (2026-02-04)
+#### Changes
+- Added `panViewport` function to support viewport panning.
+- Updated `getViewportsInformation` with additional viewport information for pan calculations.
+
+### 1.0.53 (2026-01-13)
+#### Changes
+- Added copyright information.
+
 ### 1.0.52 (2025-12-15)
 #### Changes
 - Version update for MedDream 8.8.0 version release.
