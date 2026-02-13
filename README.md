@@ -1,5 +1,5 @@
 # MedDream Viewer Communication API
-##### Version 1.0.54 (2026-02-04)
+##### Version 1.0.55 (2026-02-13)
 
 ## Update your MedDream backend configuration
 Locate `application.properties` file in your MedDream backend location.
@@ -973,8 +973,9 @@ Parameter:
 - `createArgs` - an object with a batch of annotations to be created. For each
 
 createArgs data object example is provided below. Please note the following annotation types
-are supported: 'bounding-box', 'smart-paint' and 'free-draw'. Color field is optional. If provided, it should contain
-color code in hex format.
+are supported: 'bounding-box', 'measurement', 'smart-paint' and 'free-draw'. Color field is optional. If provided, it should contain color code in hex format.
+Annotation types 'bounding-box' and 'measurements' are mapped to 'measurement' annotations, while all
+others are mapped to 'smart paint' annotations.
 
 ```js
 const createArgs = {
@@ -1444,6 +1445,10 @@ function get3DImagePositionFrom2D (position2d) {
 ```
 
 ## Change log
+### 1.0.55 (2026-02-13)
+#### Changes
+- Updated documentation for `createSegmentingAnnotations` to reflect recent changes.
+
 ### 1.0.54 (2026-02-04)
 #### Changes
 - Added `panViewport` function to support viewport panning.
