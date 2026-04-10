@@ -1,5 +1,5 @@
 # MedDream Viewer Communication API
-##### Version 1.0.55 (2026-02-13)
+##### Version 1.0.56 (2026-04-10)
 
 ## Update your MedDream backend configuration
 Locate `application.properties` file in your MedDream backend location.
@@ -976,6 +976,26 @@ createArgs data object example is provided below. Please note the following anno
 are supported: 'bounding-box', 'measurement', 'smart-paint' and 'free-draw'. Color field is optional. If provided, it should contain color code in hex format.
 Annotation types 'bounding-box' and 'measurements' are mapped to 'measurement' annotations, while all
 others are mapped to 'smart paint' annotations.
+List of supported tool IDs for 'measurement' annotations:
+- line-annotation
+- point-annotation
+- poly-annotation (polyline)
+- curve-annotation (spline based polyline)
+- erase-annotation (eraser)
+- circle-annotation
+- ellipse-annotation
+- polygon-annotation (free shape polygon)
+- bounding-box (3d)
+- bounding-box-2d
+List of supported tool IDs for 'smart-paint' annotations:
+- smart-paint-brush
+- smart-paint-brush-with-ref
+- smart-paint-fill-brush
+- smart-paint-bucket
+- smart-paint-smooth-brush
+- smart-paint-pencil
+- smart-paint-eraser
+Please note providing 'defaultToolId' is optional - if it is not provided, the system will default to hard-coded preferences.
 
 ```js
 const createArgs = {
@@ -986,7 +1006,8 @@ const createArgs = {
             storageId: 'ABC',
             label: 'Smart paint for CT#3',
             annotationType: 'smart-paint',
-            color: '#112233'
+            color: '#112233',
+            defaultToolId: 'line-annotation'
         }
     ]
 };
@@ -1445,6 +1466,10 @@ function get3DImagePositionFrom2D (position2d) {
 ```
 
 ## Change log
+### 1.0.56 (2026-04-10)
+#### Changes
+- Updated documentation for `createSegmentingAnnotations` to reflect new ability to specify default tool ID.
+
 ### 1.0.55 (2026-02-13)
 #### Changes
 - Updated documentation for `createSegmentingAnnotations` to reflect recent changes.
