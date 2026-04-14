@@ -1,5 +1,5 @@
 # MedDream Viewer Communication API
-##### Version 1.0.56 (2026-04-10)
+##### Version 1.0.57 (2026-04-14)
 
 ## Update your MedDream backend configuration
 Locate `application.properties` file in your MedDream backend location.
@@ -1466,6 +1466,10 @@ function get3DImagePositionFrom2D (position2d) {
 ```
 
 ## Change log
+### 1.0.57 (2026-04-14)
+#### Changes
+- Updated `setCustomTags` documentation example colors.
+
 ### 1.0.56 (2026-04-10)
 #### Changes
 - Updated documentation for `createSegmentingAnnotations` to reflect new ability to specify default tool ID.
