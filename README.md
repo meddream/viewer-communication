@@ -1,5 +1,5 @@
 # MedDream Viewer Communication API
-##### Version 1.0.57 (2026-04-14)
+##### Version 1.0.58 (2026-04-22)
 
 ## Update your MedDream backend configuration
 Locate `application.properties` file in your MedDream backend location.
@@ -441,12 +441,38 @@ viewerCommunication.setSuggestedAnnotationNames(suggestedNames);
 ```
 
 Parameter:
-- `suggestedNames` - Array with suggested segmentation annotation names.
+- `suggestedNames` - Array with suggested segmentation annotation names. Each entry can be a plain string or an object with the following properties:
+  - `name` - Annotation name.
+  - `color` (Optional) - Color code in hex format.
+  - `defaultToolId` (Optional) - Default tool ID to use for this annotation.
+List of supported tool IDs for 'measurement' annotations:
+- line-annotation
+- point-annotation
+- poly-annotation (polyline)
+- curve-annotation (spline based polyline)
+- erase-annotation (eraser)
+- circle-annotation
+- ellipse-annotation
+- polygon-annotation (free shape polygon)
+- bounding-box (3d)
+- bounding-box-2d
+List of supported tool IDs for 'smart-paint' annotations:
+- smart-paint-brush
+- smart-paint-brush-with-ref
+- smart-paint-fill-brush
+- smart-paint-bucket
+- smart-paint-smooth-brush
+- smart-paint-pencil
+- smart-paint-eraser
 
 Array example:
 
 ```js
-const suggestedNames = ['Left', 'Right'];
+const suggestedNames = [
+    'Left',
+    'Right',
+    {name: 'Abdomen', color: '#ff0000', defaultToolId: 'smart-paint-brush'}
+];
 ```
 
 #### Get opened studies
@@ -1466,6 +1492,10 @@ function get3DImagePositionFrom2D (position2d) {
 ```
 
 ## Change log
+### 1.0.58 (2026-04-22)
+#### Changes
+- Updated `setSuggestedAnnotationNames` function documentation, as function now accepts more information (such as color, default tool ID).
+
 ### 1.0.57 (2026-04-14)
 #### Changes
 - Updated `setCustomTags` documentation example colors.
