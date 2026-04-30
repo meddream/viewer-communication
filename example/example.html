@@ -205,14 +205,21 @@ altered under any circumstances
 			viewerCommunication.closeAllStudies();
 		}
 
+		function setPanelLayout (rows, columns) {
+			viewerCommunication.setPanelLayout(rows, columns);
+		}
+
+		function getSelectedPanelId () {
+			return document.getElementById('panelId').value || undefined;
+		}
+
 		function setLayout (columns, rows) {
-			viewerCommunication.setLayout(columns, rows);
+			viewerCommunication.setLayout(columns, rows, getSelectedPanelId());
 		}
 
 		function openInstance () {
-			const instanceUid = '1.2.840.113619.2.55.3.4271045733.996.1449464144.599.1';
-			const panelId = 'viewport-container-1-1';
-			const viewportColumn = 2;
+			const panelId = getSelectedPanelId() || 'viewport-container-1-1';
+			const viewportColumn = 1;
 			const viewportRow = 1;
 			const viewportActions = {
 				windowing: 'AUTO',							//DEFAULT, AUTO, CUSTOM
@@ -225,22 +232,33 @@ altered under any circumstances
 				//alignment: 'CENTER'						//RIGHT, LEFT, CENTER
 			};
 			const frameNumber = 0; // Frames start counting from 0 in the code, but the viewer shows them starting from 1
-			viewerCommunication.openInstance({
-				instanceUid,
-				panelId,
-				viewportColumn,
-				viewportRow,
-				viewportActions,
-				frameNumber
+
+			// Subscribe with a one-shot handler, then restore the original callback to get the instance depending on the loaded series
+			viewerCommunication.subscribeGetOpenedSeriesEvent(function (series) {
+				viewerCommunication.subscribeGetOpenedSeriesEvent(onGetDataCallback);
+				if (!series || !series.length || !series[0].instances || !series[0].instances.length) {
+					console.warn('No opened series or instances found');
+					return;
+				}
+				const instanceUid = series[0].instances[0].uid;
+				viewerCommunication.openInstance({
+					instanceUid,
+					panelId,
+					viewportColumn,
+					viewportRow,
+					viewportActions,
+					frameNumber
+				});
 			});
+			viewerCommunication.getOpenedSeries();
 		}
 
 		function exportActiveInstance () {
-			viewerCommunication.exportInstance();
+			viewerCommunication.exportInstance(1, 1, getSelectedPanelId());
 		}
 
 		function exportContainerInstance (viewportColumn, viewportRow) {
-			viewerCommunication.exportInstance(viewportColumn, viewportRow);
+			viewerCommunication.exportInstance(viewportColumn, viewportRow, getSelectedPanelId());
 		}
 
 		function disableSegmentation () {
@@ -475,6 +493,11 @@ altered under any circumstances
 
 		function applyNextHangingProtocolCP () {
 			viewerCommunication.applyNextHangingProtocolCP();
+		}
+
+		function setActiveViewport () {
+			const containerId = document.getElementById('activeViewportContainerId').value;
+			viewerCommunication.setActiveViewport(containerId);
 		}
 
 		function performInitiateCreateMeasurement () {
@@ -1039,6 +1062,25 @@ altered under any circumstances
 	</div>
 	<div id="viewportFunctionsContainer" class="tab-content" style='display: none;'>
 		<div>
+			<label>Panel layout:</label>
+			<button type='button' onclick='setPanelLayout(1, 1)'>1×1</button>
+			<button type='button' onclick='setPanelLayout(1, 2)'>1×2</button>
+			<button type='button' onclick='setPanelLayout(2, 1)'>2×1</button>
+			<button type='button' onclick='setPanelLayout(2, 2)'>2×2</button>
+		</div>
+		<br>
+		<div>
+			<label for='panelId'>Panel ID:</label>
+			<select id='panelId'>
+				<option value='viewport-container-1-1'>viewport-container-1-1</option>
+				<option value='viewport-container-1-2'>viewport-container-1-2</option>
+				<option value='viewport-container-2-1'>viewport-container-2-1</option>
+				<option value='viewport-container-2-2'>viewport-container-2-2</option>
+			</select>
+		</div>
+		<br>
+		<div>
+			<label>Inner viewport layout:</label>
 			<button type='button' onclick='setLayout(3, 3)'>Set layout 3x3</button>
 			<button type='button' onclick='setLayout(2, 1)'>Set layout 2x1</button>
 			<button type='button' onclick='setLayout(1, 2)'>Set layout 1x2</button>
@@ -1088,6 +1130,15 @@ altered under any circumstances
 			<button type='button' onclick='applyNextHangingProtocolCategory()'>Apply next HP category</button>
 			<button type='button' onclick='applyNextHangingProtocolCP()'>Apply next CP</button>
 		</div>
+		<br>
+		<div>
+			<select id='activeViewportContainerId'>
+				<option value='viewport-container-1-1-1-1'>viewport-container-1-1-1-1</option>
+				<option value='viewport-container-1-1-1-2'>viewport-container-1-1-1-2</option>
+			</select>
+			<button type='button' onclick='setActiveViewport()'>Set Active Viewport</button>
+		</div>
+		<br>
 	</div>
 	<div id="measurementsFunctionsContainer" class="tab-content" style='display: none;'>
 		<div>
