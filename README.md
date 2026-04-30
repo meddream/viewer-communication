@@ -1,5 +1,5 @@
 # MedDream Viewer Communication API
-##### Version 1.0.58 (2026-04-22)
+##### Version 1.0.59 (2026-04-30)
 
 ## Update your MedDream backend configuration
 Locate `application.properties` file in your MedDream backend location.
@@ -322,15 +322,30 @@ viewerCommunication.cacheAllStudies();
 viewerCommunication.closeAllStudies();
 ```
 
-#### Set layout
+#### Set panel layout
 ```js
-viewerCommunication.setLayout(columns, rows);
+viewerCommunication.setPanelLayout(rows, columns);
 ```
+
+Sets the number of panels (study panels) in the viewer layout.
 
 Parameters:
 
-- `columns` - Number of columns.
-- `rows` - Number of rows.
+- `rows` - Number of panel rows.
+- `columns` - Number of panel columns.
+
+#### Set layout
+```js
+viewerCommunication.setLayout(columns, rows, panelId);
+```
+
+Sets the inner viewport layout within a panel.
+
+Parameters:
+
+- `columns` - Number of viewport columns.
+- `rows` - Number of viewport rows.
+- `panelId` (Optional) - Target panel ID. If omitted, the first panel is used.
 
 #### Open instance
 ```js
@@ -385,13 +400,14 @@ const viewportActions = {
 
 #### Export instance
 ```js
-viewerCommunication.exportInstance(viewportColumn, viewportRow);
+viewerCommunication.exportInstance(viewportColumn, viewportRow, panelId);
 ```
 
 Parameters:
 
 - `viewportColumn` (Optional) - Column number of desired viewport.
 - `viewportRow` (Optional) - Row number of desired viewport.
+- `panelId` (Optional) - Target panel ID. If omitted, the first panel is used.
 
 Currently active viewport instance is exported, if `viewportColumn` and `viewportRow` are not provided.
 
@@ -937,6 +953,25 @@ viewerCommunication.applyNextHangingProtocolCategory();
 #### Apply next hanging protocol comparison study (CP)
 ```js
 viewerCommunication.applyNextHangingProtocolCP();
+```
+
+#### Set active viewport
+```js
+viewerCommunication.setActiveViewport(containerId);
+```
+
+Programmatically activates the specified viewport container, making it the target for all subsequent commands that operate on the active viewport (e.g., `getViewportData`).
+
+Parameter:
+
+- `containerId` - Viewport container ID to activate (e.g., `viewport-container-1-1-1-1`).
+
+If the container does not exist in the current layout, the action is silently ignored.
+
+Container ID pattern: `{panelId}-{viewportRow}-{viewportColumn}`
+
+```js
+viewerCommunication.setActiveViewport('viewport-container-1-1-1-2');
 ```
 
 #### Toggle Create Virtual Series modal dialog
@@ -1492,6 +1527,13 @@ function get3DImagePositionFrom2D (position2d) {
 ```
 
 ## Change log
+### 1.0.59 (2026-04-30)
+#### Changes
+- Added `setPanelLayout` function to set the number of study panels in the viewer layout.
+- Added `setActiveViewport` function to programmatically activate a specific viewport container.
+- Updated `setLayout` documentation to include the optional `panelId` parameter.
+- Updated `exportInstance` documentation to include the optional `panelId` parameter.
+
 ### 1.0.58 (2026-04-22)
 #### Changes
 - Updated `setSuggestedAnnotationNames` function documentation, as function now accepts more information (such as color, default tool ID).

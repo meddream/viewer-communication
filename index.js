@@ -381,16 +381,28 @@ altered under any circumstances
 			this.postActionMessage('CLOSE_ALL_STUDIES');
 		};
 
-		functions.setLayout = function (columns, rows) {
-			this.postActionMessage('SET_LAYOUT', {columns, rows});
+		functions.setPanelLayout = function (rows, columns) {
+			this.postActionMessage('SET_PANEL_LAYOUT', {rows, columns});
+		};
+
+		functions.setLayout = function (columns, rows, panelId) {
+			const actionData = {columns, rows};
+			if (panelId) {
+				actionData.panelId = panelId;
+			}
+			this.postActionMessage('SET_LAYOUT', actionData);
 		};
 
 		functions.openInstance = function (actionData) {
 			this.postActionMessage('OPEN_INSTANCE', actionData);
 		};
 
-		functions.exportInstance = function (viewportColumn, viewportRow) {
-			this.postActionMessage('EXPORT_INSTANCE', {viewportColumn, viewportRow});
+		functions.exportInstance = function (viewportColumn, viewportRow, panelId) {
+			const actionData = {viewportColumn, viewportRow};
+			if (panelId) {
+				actionData.panelId = panelId;
+			}
+			this.postActionMessage('EXPORT_INSTANCE', actionData);
 		};
 
 		functions.updateSegmentationToolPermissions = function (permissions) {
@@ -776,6 +788,10 @@ altered under any circumstances
 		functions.toggleVirtualSeriesDialog = function (actionData) {
 			this.postActionMessage('TOGGLE_VIRTUAL_SERIES_DIALOG', actionData);
 		}
+
+		functions.setActiveViewport = function (containerId) {
+			this.postActionMessage('SET_ACTIVE_VIEWPORT', {containerId});
+		};
 
 		functions.getIntegrationType = function () {
 			return integrationType;
