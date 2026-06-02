@@ -1,3 +1,11 @@
+<!--
+Copyright (c) MedDream UAB, Lithuania. All rights reserved.
+This source code is the confidential and proprietary property of MedDream UAB.
+Unauthorized use, copying, storing, modification, adapting, disclosing, publishing,
+distribution, decompiling, disassembling, reverse engineering, compilation, or
+creation of derivative works, in whole or in part, is strictly prohibited.
+altered under any circumstances
+-->
 <!DOCTYPE html>
 <html>
 <head>
@@ -197,14 +205,21 @@
 			viewerCommunication.closeAllStudies();
 		}
 
+		function setPanelLayout (rows, columns) {
+			viewerCommunication.setPanelLayout(rows, columns);
+		}
+
+		function getSelectedPanelId () {
+			return document.getElementById('panelId').value || undefined;
+		}
+
 		function setLayout (columns, rows) {
-			viewerCommunication.setLayout(columns, rows);
+			viewerCommunication.setLayout(columns, rows, getSelectedPanelId());
 		}
 
 		function openInstance () {
-			const instanceUid = '1.2.840.113619.2.55.3.4271045733.996.1449464144.599.1';
-			const panelId = 'viewport-container-1-1';
-			const viewportColumn = 2;
+			const panelId = getSelectedPanelId() || 'viewport-container-1-1';
+			const viewportColumn = 1;
 			const viewportRow = 1;
 			const viewportActions = {
 				windowing: 'AUTO',							//DEFAULT, AUTO, CUSTOM
@@ -217,22 +232,33 @@
 				//alignment: 'CENTER'						//RIGHT, LEFT, CENTER
 			};
 			const frameNumber = 0; // Frames start counting from 0 in the code, but the viewer shows them starting from 1
-			viewerCommunication.openInstance({
-				instanceUid,
-				panelId,
-				viewportColumn,
-				viewportRow,
-				viewportActions,
-				frameNumber
+
+			// Subscribe with a one-shot handler, then restore the original callback to get the instance depending on the loaded series
+			viewerCommunication.subscribeGetOpenedSeriesEvent(function (series) {
+				viewerCommunication.subscribeGetOpenedSeriesEvent(onGetDataCallback);
+				if (!series || !series.length || !series[0].instances || !series[0].instances.length) {
+					console.warn('No opened series or instances found');
+					return;
+				}
+				const instanceUid = series[0].instances[0].uid;
+				viewerCommunication.openInstance({
+					instanceUid,
+					panelId,
+					viewportColumn,
+					viewportRow,
+					viewportActions,
+					frameNumber
+				});
 			});
+			viewerCommunication.getOpenedSeries();
 		}
 
 		function exportActiveInstance () {
-			viewerCommunication.exportInstance();
+			viewerCommunication.exportInstance(1, 1, getSelectedPanelId());
 		}
 
 		function exportContainerInstance (viewportColumn, viewportRow) {
-			viewerCommunication.exportInstance(viewportColumn, viewportRow);
+			viewerCommunication.exportInstance(viewportColumn, viewportRow, getSelectedPanelId());
 		}
 
 		function disableSegmentation () {
@@ -359,22 +385,48 @@
 				{
 					level: 'study',
 					uid: '1.2.840.113619.2.55.3.4271045733.996.1449464144.595',
-					tags: [{text: 'Leg', color: '#f6ff00'}, {text: 'Right knee', color: '#0d00ff'}, {text: 'Leg', color: '#d000ff'}, {text: 'Leg', color: '#f6ff00'}, {text: 'Abdomen', color: '#40f616'}]
+					tags: [
+						{text: 'Leg', color: '#ffd600'},
+						{text: 'Right knee', color: '#ff1f00'},
+						{text: 'Leg', color: '#00a3ff'},
+						{text: 'Leg', color: '#d0d0d0'},
+						{text: 'Abdomen', color: '#05ff00'}
+					]
 				},
 				{
 					level: 'series',
 					uid: '1.2.840.113619.2.55.3.4271045733.996.1449464144.598',
-					tags: [{text: 'Abdomen', color: '#40f616'}, {text: 'Right knee', color: '#0d00ff'}, {text: 'Abdomen', color: '#ff0019'}, {text: 'Leg', color: '#1f7aab'}, {text: 'Leg', color: '#f6ff00'}, {text: 'Abdomen', color: '#ff0019'}]
+					tags: [
+						{text: 'Abdomen', color: '#05ff00'},
+						{text: 'Right knee', color: '#00a3ff'},
+						{text: 'Abdomen', color: '#ff1f00'},
+						{text: 'Leg', color: '#d0d0d0'},
+						{text: 'Leg', color: '#ffd600'},
+						{text: 'Abdomen', color: '#cA59ff'}
+					]
 				},
 				{
 					level: 'series',
 					uid: '1.2.840.113619.2.55.3.4271045733.996.1449464144.601',
-					tags: [{text: 'Right knee', color: '#0d00ff'}, {text: 'Abdomen', color: '#ff0019'}, {text: 'Leg', color: '#1f7aab'}, {text: 'Leg', color: '#f6ff00'}]
+					tags: [
+						{text: 'Right knee', color: '#00a3ff'},
+						{text: 'Abdomen', color: '#ff1f00'},
+						{text: 'Leg', color: '#d0d0d0'},
+						{text: 'Leg', color: '#ffd600'}
+					]
 				},
 				{
 					level: 'study',
 					uid: '1.2.826.0.1.3680043.8.1055.1.20161012115812848.450575715.8637545',
-					tags: [{text: 'Abdomen', color: '#40f616'}, {text: 'Right knee', color: '#0d00ff'}, {text: 'Abdomen', color: '#ff0019'}, {text: 'Leg', color: '#1f7aab'}, {text: 'Leg', color: '#f6ff00'}, {text: 'Abdomen', color: '#ff0019'},{text: 'Abdomen', color: '#ff0019'}]
+					tags: [
+						{text: 'Abdomen', color: '#05ff00'},
+						{text: 'Right knee', color: '#00a3ff'},
+						{text: 'Abdomen', color: '#ff1f00'},
+						{text: 'Leg', color: '#d0d0d0'},
+						{text: 'Leg', color: '#ffd600'},
+						{text: 'Abdomen', color: '#cA59ff'},
+						{text: 'Abdomen', color: '#ff1f00'}
+					]
 				},
 			]
 			viewerCommunication.setCustomTags(exampleTags);
@@ -382,6 +434,10 @@
 
 		function setMultiframeRatio () {
 			viewerCommunication.setMultiframeFpsRatio(0.5)
+		}
+
+		function panViewport () {
+			viewerCommunication.panViewport('viewport-container-1-1-1-1', {x: 100, y: 50})
 		}
 
 		function generateInstanceMpr (containerId) {
@@ -437,6 +493,11 @@
 
 		function applyNextHangingProtocolCP () {
 			viewerCommunication.applyNextHangingProtocolCP();
+		}
+
+		function setActiveViewport () {
+			const containerId = document.getElementById('activeViewportContainerId').value;
+			viewerCommunication.setActiveViewport(containerId);
 		}
 
 		function performInitiateCreateMeasurement () {
@@ -1001,6 +1062,25 @@
 	</div>
 	<div id="viewportFunctionsContainer" class="tab-content" style='display: none;'>
 		<div>
+			<label>Panel layout:</label>
+			<button type='button' onclick='setPanelLayout(1, 1)'>1×1</button>
+			<button type='button' onclick='setPanelLayout(1, 2)'>1×2</button>
+			<button type='button' onclick='setPanelLayout(2, 1)'>2×1</button>
+			<button type='button' onclick='setPanelLayout(2, 2)'>2×2</button>
+		</div>
+		<br>
+		<div>
+			<label for='panelId'>Panel ID:</label>
+			<select id='panelId'>
+				<option value='viewport-container-1-1'>viewport-container-1-1</option>
+				<option value='viewport-container-1-2'>viewport-container-1-2</option>
+				<option value='viewport-container-2-1'>viewport-container-2-1</option>
+				<option value='viewport-container-2-2'>viewport-container-2-2</option>
+			</select>
+		</div>
+		<br>
+		<div>
+			<label>Inner viewport layout:</label>
 			<button type='button' onclick='setLayout(3, 3)'>Set layout 3x3</button>
 			<button type='button' onclick='setLayout(2, 1)'>Set layout 2x1</button>
 			<button type='button' onclick='setLayout(1, 2)'>Set layout 1x2</button>
@@ -1027,7 +1107,11 @@
 			<button type='button' onclick='setAdditionalTopInfoLabels()'>Set additional top info labels</button>
 			<button type='button' onclick='setCustomStudyLabel()'>Set custom study label</button>
 			<button type='button' onclick='setCustomTags()'>Set custom study and series tags</button>
+		</div>
+		<br>
+		<div>
 			<button type='button' onclick='setMultiframeRatio()'>Set multiframe FPS ratio to 0.5</button>
+			<button type='button' onclick='panViewport()'>Pan viewport</button>
 		</div>
 		<br>
 		<div>
@@ -1046,6 +1130,15 @@
 			<button type='button' onclick='applyNextHangingProtocolCategory()'>Apply next HP category</button>
 			<button type='button' onclick='applyNextHangingProtocolCP()'>Apply next CP</button>
 		</div>
+		<br>
+		<div>
+			<select id='activeViewportContainerId'>
+				<option value='viewport-container-1-1-1-1'>viewport-container-1-1-1-1</option>
+				<option value='viewport-container-1-1-1-2'>viewport-container-1-1-1-2</option>
+			</select>
+			<button type='button' onclick='setActiveViewport()'>Set Active Viewport</button>
+		</div>
+		<br>
 	</div>
 	<div id="measurementsFunctionsContainer" class="tab-content" style='display: none;'>
 		<div>
