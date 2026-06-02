@@ -1,5 +1,5 @@
 # MedDream Viewer Communication API
-##### Version 1.0.59 (2026-04-30)
+##### Version 1.0.60 (2026-06-02)
 
 ## Update your MedDream backend configuration
 Locate `application.properties` file in your MedDream backend location.
@@ -1527,6 +1527,10 @@ function get3DImagePositionFrom2D (position2d) {
 ```
 
 ## Change log
+### 1.0.60 (2026-06-02)
+#### Changes
+- Version update for MedDream 8.9.0 version release.
+
 ### 1.0.59 (2026-04-30)
 #### Changes
 - Added `setPanelLayout` function to set the number of study panels in the viewer layout.
